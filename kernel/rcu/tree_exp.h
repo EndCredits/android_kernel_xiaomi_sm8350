@@ -689,7 +689,7 @@ static void rcu_exp_handler(void *unused)
 	WARN_ON_ONCE(1);
 }
 
-/* PREEMPT=y, so no PREEMPT=n expedited grace period to clean up after. */
+/* PREEMPTION=y, so no PREEMPTION=n expedited grace period to clean up after. */
 static void sync_sched_exp_online_cleanup(int cpu)
 {
 }
