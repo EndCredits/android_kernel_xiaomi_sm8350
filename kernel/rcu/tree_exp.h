@@ -509,7 +509,6 @@ static void synchronize_rcu_expedited_wait(void)
 				tick_dep_set_cpu(cpu, TICK_DEP_BIT_RCU_EXP);
 			}
 		}
-		WARN_ON_ONCE(1);
 	}
 
 	for (;;) {
