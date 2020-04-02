@@ -2119,15 +2119,10 @@ found_highest:
  */
 unsigned long vm_unmapped_area(struct vm_unmapped_area_info *info)
 {
-	unsigned long addr;
-
 	if (info->flags & VM_UNMAPPED_AREA_TOPDOWN)
-		addr = unmapped_area_topdown(info);
+		return unmapped_area_topdown(info);
 	else
-		addr = unmapped_area(info);
-
-	trace_vm_unmapped_area(addr, info);
-	return addr;
+		return unmapped_area(info);
 }
 
 /* Get an address range which is currently unmapped.
