@@ -124,7 +124,6 @@ seconds=$4
 qemu_args=$5
 boot_args=$6
 
-kstarttime=`gawk 'BEGIN { print systime() }' < /dev/null`
 if test -z "$TORTURE_BUILDONLY"
 then
 	echo ' ---' `date`: Starting kernel
@@ -152,7 +151,13 @@ qemu_append="`identify_qemu_append "$QEMU"`"
 boot_args="`configfrag_boot_params "$boot_args" "$config_template"`"
 # Generate kernel-version-specific boot parameters
 boot_args="`per_version_boot_params "$boot_args" $resdir/.config $seconds`"
-echo $QEMU $qemu_args -m $TORTURE_QEMU_MEM -kernel $KERNEL -append \"$qemu_append $boot_args\" > $resdir/qemu-cmd
+if test -n "$TORTURE_BOOT_GDB_ARG"
+then
+	boot_args="$boot_args $TORTURE_BOOT_GDB_ARG"
+fi
+echo $QEMU $qemu_args -m $TORTURE_QEMU_MEM -kernel $KERNEL -append \"$qemu_append $boot_args\" $TORTURE_QEMU_GDB_ARG > $resdir/qemu-cmd
+echo "# TORTURE_SHUTDOWN_GRACE=$TORTURE_SHUTDOWN_GRACE" >> $resdir/qemu-cmd
+echo "# seconds=$seconds" >> $resdir/qemu-cmd
 
 if test -n "$TORTURE_BUILDONLY"
 then
@@ -169,6 +174,7 @@ echo 'echo $! > $resdir/qemu_pid' >> $T/qemu-cmd
 echo "NOTE: $QEMU either did not run or was interactive" > $resdir/console.log
 
 # Attempt to run qemu
+kstarttime=`gawk 'BEGIN { print systime() }' < /dev/null`
 ( . $T/qemu-cmd; wait `cat  $resdir/qemu_pid`; echo $? > $resdir/qemu-retval ) &
 commandcompleted=0
 sleep 10 # Give qemu's pid a chance to reach the file
@@ -192,7 +198,7 @@ do
 		if test -n "$TORTURE_KCONFIG_GDB_ARG"
 		then
 			:
-		elif test $kruntime -ge $seconds || test -f "$TORTURE_STOPFILE"
+		elif test $kruntime -ge $seconds || test -f "$resdir/../STOP.1"
 		then
 			break;
 		fi
@@ -235,16 +241,16 @@ then
 fi
 if test $commandcompleted -eq 0 -a -n "$qemu_pid"
 then
-	if ! test -f "$TORTURE_STOPFILE"
+	if ! test -f "$resdir/../STOP.1"
 	then
 		echo Grace period for qemu job at pid $qemu_pid
 	fi
 	oldline="`tail $resdir/console.log`"
 	while :
 	do
-		if test -f "$TORTURE_STOPFILE"
+		if test -f "$resdir/../STOP.1"
 		then
-			echo "PID $qemu_pid killed due to run STOP request" >> $resdir/Warnings 2>&1
+			echo "PID $qemu_pid killed due to run STOP.1 request" >> $resdir/Warnings 2>&1
 			kill -KILL $qemu_pid
 			break
 		fi
