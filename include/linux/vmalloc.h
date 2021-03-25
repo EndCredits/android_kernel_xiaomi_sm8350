@@ -249,7 +249,7 @@ extern unsigned long total_vmalloc_size;
 int register_vmap_purge_notifier(struct notifier_block *nb);
 int unregister_vmap_purge_notifier(struct notifier_block *nb);
 
-#ifdef CONFIG_MMU
+#if defined(CONFIG_MMU) && defined(CONFIG_PRINTK)
 bool vmalloc_dump_obj(void *object);
 #else
 static inline bool vmalloc_dump_obj(void *object) { return false; }
