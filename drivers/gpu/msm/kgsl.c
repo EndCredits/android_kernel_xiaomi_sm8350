@@ -28,6 +28,7 @@
 #include "kgsl_device.h"
 #include "kgsl_mmu.h"
 #include "kgsl_pool.h"
+#include "kgsl_sharedmem.h"
 #include "kgsl_sync.h"
 #include "kgsl_sysfs.h"
 #include "kgsl_trace.h"
@@ -4568,8 +4569,6 @@ void kgsl_device_platform_remove(struct kgsl_device *device)
 		destroy_workqueue(device->events_wq);
 		device->events_wq = NULL;
 	}
-
-	kgsl_device_snapshot_close(device);
 
 	idr_destroy(&device->context_idr);
 	idr_destroy(&device->timelines);
