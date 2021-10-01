@@ -1243,6 +1243,13 @@ static void _dsi_display_setup_misr(struct dsi_display *display)
 	}
 }
 
+<<<<<<< HEAD
+=======
+extern int dsi_panel_set_aod_mode(struct dsi_panel *panel, int level);
+
+extern void zram_set_screen_state(bool on);
+
+>>>>>>> 4f8a4d3b8f33 (zram: call the fb notifier directly from msm drm)
 int dsi_display_set_power(struct drm_connector *connector,
 		int power_mode, void *disp)
 {
@@ -1289,8 +1296,11 @@ int dsi_display_set_power(struct drm_connector *connector,
 			rc = dsi_panel_set_nolp(display->panel);
 			mi_disp_notifier_call_chain(MI_DISP_DPMS_EVENT, &notify_data);
 		}
+		zram_set_screen_state(true);
 		break;
 	case SDE_MODE_DPMS_OFF:
+		zram_set_screen_state(false);
+		break;
 	default:
 		return rc;
 	}
