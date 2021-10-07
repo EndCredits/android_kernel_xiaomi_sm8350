@@ -2767,7 +2767,7 @@ static int rcu_torture_read_exit(void *unused)
 static int rcu_torture_read_exit_init(void)
 {
 	if (read_exit_burst <= 0)
-		return -EINVAL;
+		return 0;
 	init_waitqueue_head(&read_exit_wq);
 	read_exit_child_stop = false;
 	read_exit_child_stopped = false;
@@ -2845,7 +2845,7 @@ rcu_torture_cleanup(void)
 		 rcutorture_seq_diff(gp_seq, start_gp_seq));
 	torture_stop_kthread(rcu_torture_stats, stats_task);
 	torture_stop_kthread(rcu_torture_fqs, fqs_task);
-	if (rcu_torture_can_boost())
+	if (rcu_torture_can_boost() && rcutor_hp >= 0)
 		cpuhp_remove_state(rcutor_hp);
 
 	/*
@@ -3063,7 +3063,7 @@ rcu_torture_init(void)
 	rcu_torture_write_types();
 	firsterr = torture_create_kthread(rcu_torture_writer, NULL,
 					  writer_task);
-	if (firsterr)
+	if (torture_init_error(firsterr))
 		goto unwind;
 	if (nfakewriters > 0) {
 		fakewriter_tasks = kcalloc(nfakewriters,
@@ -3078,7 +3078,7 @@ rcu_torture_init(void)
 	for (i = 0; i < nfakewriters; i++) {
 		firsterr = torture_create_kthread(rcu_torture_fakewriter,
 						  NULL, fakewriter_tasks[i]);
-		if (firsterr)
+		if (torture_init_error(firsterr))
 			goto unwind;
 	}
 	reader_tasks = kcalloc(nrealreaders, sizeof(reader_tasks[0]),
@@ -3094,7 +3094,7 @@ rcu_torture_init(void)
 		rcu_torture_reader_mbchk[i].rtc_chkrdr = -1;
 		firsterr = torture_create_kthread(rcu_torture_reader, (void *)i,
 						  reader_tasks[i]);
-		if (firsterr)
+		if (torture_init_error(firsterr))
 			goto unwind;
 	}
 	nrealnocbers = nocbs_nthreads;
@@ -3114,18 +3114,18 @@ rcu_torture_init(void)
 	}
 	for (i = 0; i < nrealnocbers; i++) {
 		firsterr = torture_create_kthread(rcu_nocb_toggle, NULL, nocb_tasks[i]);
-		if (firsterr)
+		if (torture_init_error(firsterr))
 			goto unwind;
 	}
 	if (stat_interval > 0) {
 		firsterr = torture_create_kthread(rcu_torture_stats, NULL,
 						  stats_task);
-		if (firsterr)
+		if (torture_init_error(firsterr))
 			goto unwind;
 	}
 	if (test_no_idle_hz && shuffle_interval > 0) {
 		firsterr = torture_shuffle_init(shuffle_interval * HZ);
-		if (firsterr)
+		if (torture_init_error(firsterr))
 			goto unwind;
 	}
 	if (stutter < 0)
@@ -3135,7 +3135,7 @@ rcu_torture_init(void)
 
 		t = cur_ops->stall_dur ? cur_ops->stall_dur() : stutter * HZ;
 		firsterr = torture_stutter_init(stutter * HZ, t);
-		if (firsterr)
+		if (torture_init_error(firsterr))
 			goto unwind;
 	}
 	if (fqs_duration < 0)
@@ -3144,7 +3144,7 @@ rcu_torture_init(void)
 		/* Create the fqs thread */
 		firsterr = torture_create_kthread(rcu_torture_fqs, NULL,
 						  fqs_task);
-		if (firsterr)
+		if (torture_init_error(firsterr))
 			goto unwind;
 	}
 	if (test_boost_interval < 1)
@@ -3158,9 +3158,9 @@ rcu_torture_init(void)
 		firsterr = cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "RCU_TORTURE",
 					     rcutorture_booster_init,
 					     rcutorture_booster_cleanup);
-		if (firsterr < 0)
-			goto unwind;
 		rcutor_hp = firsterr;
+		if (torture_init_error(firsterr))
+			goto unwind;
 
 		// Testing RCU priority boosting requires rcutorture do
 		// some serious abuse.  Counter this by running ksoftirqd
@@ -3179,23 +3179,23 @@ rcu_torture_init(void)
 	}
 	shutdown_jiffies = jiffies + shutdown_secs * HZ;
 	firsterr = torture_shutdown_init(shutdown_secs, rcu_torture_cleanup);
-	if (firsterr)
+	if (torture_init_error(firsterr))
 		goto unwind;
 	firsterr = torture_onoff_init(onoff_holdoff * HZ, onoff_interval,
 				      rcutorture_sync);
-	if (firsterr)
+	if (torture_init_error(firsterr))
 		goto unwind;
 	firsterr = rcu_torture_stall_init();
-	if (firsterr)
+	if (torture_init_error(firsterr))
 		goto unwind;
 	firsterr = rcu_torture_fwd_prog_init();
-	if (firsterr)
+	if (torture_init_error(firsterr))
 		goto unwind;
 	firsterr = rcu_torture_barrier_init();
-	if (firsterr)
+	if (torture_init_error(firsterr))
 		goto unwind;
 	firsterr = rcu_torture_read_exit_init();
-	if (firsterr)
+	if (torture_init_error(firsterr))
 		goto unwind;
 	if (object_debug)
 		rcu_test_debug_objects();
