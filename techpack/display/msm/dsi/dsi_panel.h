@@ -286,6 +286,8 @@ struct dsi_panel {
 	bool fod_ui;
 	int local_hbm_on_1000nit_51_index;
 
+	bool hbm_enabled;
+
 #ifdef CONFIG_DRM_SDE_EXPO
 	bool dimlayer_exposure;
 #endif
@@ -431,4 +433,5 @@ int dsi_panel_apply_requested_fod_hbm(struct dsi_panel *panel);
 void dsi_panel_set_fod_ui(struct dsi_panel *panel, bool status);
 void dsi_panel_request_fod_hbm(struct dsi_panel *panel, bool status);
 
+int dsi_panel_set_hbm_mode(struct dsi_panel *panel, bool status);
 #endif /* _DSI_PANEL_H_ */
