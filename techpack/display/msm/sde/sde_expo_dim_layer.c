@@ -21,16 +21,7 @@
 
 static int interpolate(int x, int xa, int xb, int ya, int yb)
 {
-	int bf, factor, plus;
-	int sub = 0;
-
-	bf = 2 * (yb - ya) * (x - xa) / (xb - xa);
-	factor = bf / 2;
-	plus = bf % 2;
-	if ((xa - xb) && (yb - ya))
-		sub = 2 * (x - xa) * (x - xb) / (yb - ya) / (xa - xb);
-
-	return ya + factor + plus + sub;
+	return ya + mult_frac(x - xa, yb - ya, xb - xa);
 }
 
 static int brightness_to_alpha(uint16_t brightness)
