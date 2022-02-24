@@ -26,6 +26,8 @@ static inline void rcuwait_init(struct rcuwait *w)
 
 extern void rcuwait_wake_up(struct rcuwait *w);
 
+extern void finish_rcuwait(struct rcuwait *w);
+
 /*
  * The caller is responsible for locking around rcuwait_wait_event(),
  * such that writes to @task are properly serialized.
