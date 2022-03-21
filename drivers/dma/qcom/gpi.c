@@ -3242,7 +3242,6 @@ static struct platform_driver gpi_driver = {
 	.driver = {
 		.name = GPI_DMA_DRV_NAME,
 		.of_match_table = gpi_of_match,
-		.probe_type = PROBE_FORCE_SYNCHRONOUS,
 	},
 };
 
