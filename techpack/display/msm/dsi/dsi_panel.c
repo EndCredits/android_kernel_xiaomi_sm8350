@@ -809,6 +809,9 @@ int dsi_panel_apply_requested_fod_hbm(struct dsi_panel *panel)
 done:
 	mutex_unlock(&panel->panel_lock);
 
+	if(panel->hbm_enabled)
+		dsi_panel_set_hbm_mode(panel, panel->hbm_enabled);
+
 	return rc;
 }
 
