@@ -5939,8 +5939,6 @@ static int dsi_display_sysfs_init(struct dsi_display *display)
 }
 static int dsi_display_sysfs_deinit(struct dsi_display *display)
 {
-	struct device *dev = &display->pdev->dev;
-
 	return 0;
 }
 
