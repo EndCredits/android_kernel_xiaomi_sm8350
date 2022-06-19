@@ -2081,6 +2081,9 @@ static struct ipa3_rx_pkt_wrapper *ipa3_alloc_rx_pkt_page(
 				&rx_pkt->page_data.page_order,
 				(is_tmp_alloc && rx_pkt->page_data.page_order == 3));
 
+	if (is_tmp_alloc)
+		flag |= __GFP_RETRY_MAYFAIL | __GFP_NOWARN;
+
 	if (unlikely(!rx_pkt->page_data.page))
 		goto fail_page_alloc;
 
