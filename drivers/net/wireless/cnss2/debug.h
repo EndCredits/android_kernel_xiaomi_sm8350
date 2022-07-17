@@ -30,13 +30,10 @@ extern void *cnss_ipc_log_long_context;
 
 #define cnss_pr_warn(_fmt, ...)
 
-#define cnss_pr_info(_fmt, ...)
-
-#define cnss_pr_dbg(_fmt, ...)
-
-#define cnss_pr_vdbg(_fmt, ...)
-
-#define cnss_pr_buf(_fmt, ...)
+#define cnss_pr_info(_fmt, ...) ((void)0)
+#define cnss_pr_dbg(_fmt, ...) ((void)0)
+#define cnss_pr_vdbg(_fmt, ...) ((void)0)
+#define cnss_pr_buf(_fmt, ...) ((void)0)
 
 #define CNSS_ASSERT(_condition)
 
