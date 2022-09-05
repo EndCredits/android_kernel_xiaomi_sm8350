@@ -436,4 +436,5 @@ int dsi_panel_set_doze_status(struct dsi_panel *panel, bool status);
 int dsi_panel_set_doze_mode(struct dsi_panel *panel, enum dsi_doze_mode_type mode);
 
 int dsi_panel_set_hbm_mode(struct dsi_panel *panel, bool status);
+int dsi_backlight_update_dpms(struct dsi_backlight_config *bl, int power_state);
 #endif /* _DSI_PANEL_H_ */
