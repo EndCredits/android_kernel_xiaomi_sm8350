@@ -22,6 +22,7 @@ Core utilities
    workqueue
    genericirq
    xarray
+   maple_tree
    librs
    genalloc
    errseq
