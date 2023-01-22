@@ -2169,7 +2169,7 @@ static const char * const rx_hph_mode_mux_text[] = {
 	"CLS_H_ULP", "CLS_AB_HIFI",
 };
 
-const char * const tx_master_ch_text[] = {
+const char * const wcd937x_tx_master_ch_text[] = {
 	"ZERO", "SWRM_TX1_CH1", "SWRM_TX1_CH2", "SWRM_TX1_CH3", "SWRM_TX1_CH4",
 	"SWRM_TX2_CH1", "SWRM_TX2_CH2", "SWRM_TX2_CH3", "SWRM_TX2_CH4",
 	"SWRM_TX3_CH1", "SWRM_TX3_CH2", "SWRM_TX3_CH3", "SWRM_TX3_CH4",
@@ -2177,9 +2177,9 @@ const char * const tx_master_ch_text[] = {
 	"DMIC4", "DMIC5", "DMIC6", "DMIC7",
 };
 
-const struct soc_enum tx_master_ch_enum =
-	SOC_ENUM_SINGLE_EXT(ARRAY_SIZE(tx_master_ch_text),
-					tx_master_ch_text);
+const struct soc_enum wcd937x_tx_master_ch_enum =
+	SOC_ENUM_SINGLE_EXT(ARRAY_SIZE(wcd937x_tx_master_ch_text),
+					wcd937x_tx_master_ch_text);
 
 static void wcd937x_tx_get_slave_ch_type_idx(const char *wname, int *ch_idx)
 {
@@ -2317,25 +2317,25 @@ static const struct snd_kcontrol_new wcd937x_snd_controls[] = {
 			analog_gain),
 	SOC_SINGLE_TLV("ADC3 Volume", WCD937X_ANA_TX_CH3, 0, 20, 0,
 			analog_gain),
-	SOC_ENUM_EXT("ADC1 ChMap", tx_master_ch_enum,
+	SOC_ENUM_EXT("ADC1 ChMap", wcd937x_tx_master_ch_enum,
 			wcd937x_tx_master_ch_get, wcd937x_tx_master_ch_put),
-	SOC_ENUM_EXT("ADC2 ChMap", tx_master_ch_enum,
+	SOC_ENUM_EXT("ADC2 ChMap", wcd937x_tx_master_ch_enum,
 			wcd937x_tx_master_ch_get, wcd937x_tx_master_ch_put),
-	SOC_ENUM_EXT("ADC3 ChMap", tx_master_ch_enum,
+	SOC_ENUM_EXT("ADC3 ChMap", wcd937x_tx_master_ch_enum,
 			wcd937x_tx_master_ch_get, wcd937x_tx_master_ch_put),
-	SOC_ENUM_EXT("DMIC0 ChMap", tx_master_ch_enum,
+	SOC_ENUM_EXT("DMIC0 ChMap", wcd937x_tx_master_ch_enum,
 			wcd937x_tx_master_ch_get, wcd937x_tx_master_ch_put),
-	SOC_ENUM_EXT("DMIC1 ChMap", tx_master_ch_enum,
+	SOC_ENUM_EXT("DMIC1 ChMap", wcd937x_tx_master_ch_enum,
 			wcd937x_tx_master_ch_get, wcd937x_tx_master_ch_put),
-	SOC_ENUM_EXT("MBHC ChMap", tx_master_ch_enum,
+	SOC_ENUM_EXT("MBHC ChMap", wcd937x_tx_master_ch_enum,
 			wcd937x_tx_master_ch_get, wcd937x_tx_master_ch_put),
-	SOC_ENUM_EXT("DMIC2 ChMap", tx_master_ch_enum,
+	SOC_ENUM_EXT("DMIC2 ChMap", wcd937x_tx_master_ch_enum,
 			wcd937x_tx_master_ch_get, wcd937x_tx_master_ch_put),
-	SOC_ENUM_EXT("DMIC3 ChMap", tx_master_ch_enum,
+	SOC_ENUM_EXT("DMIC3 ChMap", wcd937x_tx_master_ch_enum,
 			wcd937x_tx_master_ch_get, wcd937x_tx_master_ch_put),
-	SOC_ENUM_EXT("DMIC4 ChMap", tx_master_ch_enum,
+	SOC_ENUM_EXT("DMIC4 ChMap", wcd937x_tx_master_ch_enum,
 			wcd937x_tx_master_ch_get, wcd937x_tx_master_ch_put),
-	SOC_ENUM_EXT("DMIC5 ChMap", tx_master_ch_enum,
+	SOC_ENUM_EXT("DMIC5 ChMap", wcd937x_tx_master_ch_enum,
 			wcd937x_tx_master_ch_get, wcd937x_tx_master_ch_put),
 	SOC_ENUM_EXT("TX CH1 PWR", wcd937x_tx_ch_pwr_level_enum,
 		wcd937x_tx_ch_pwr_level_get, wcd937x_tx_ch_pwr_level_put),
