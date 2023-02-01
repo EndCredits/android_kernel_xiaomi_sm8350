@@ -8987,8 +8987,6 @@ static int fts_remove(struct spi_device *client)
 	class_destroy(info->fts_tp_class);
 	info->fts_tp_class = NULL;
 */
-	if (info->debugfs)
-		debugfs_remove(info->debugfs);
 
 	fts_enable_reg(info, false);
 	fts_get_reg(info, false);

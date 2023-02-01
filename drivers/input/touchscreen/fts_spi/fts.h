@@ -79,9 +79,7 @@
 
 #define FTS_XIAOMI_TOUCHFEATURE
 #define FTS_FOD_AREA_REPORT
-#define FTS_DEBUG_FS
 
-#define DEBUG
 
 /*#define USE_ONE_FILE_NODE*/
 
@@ -174,7 +172,6 @@ do {\
 #define FTS_RESULT_FAIL 1
 #define FTS_SELFTEST_FORCE_CAL
 
-#define GRIP_MODE_DEBUG
 #define GRIP_RECT_NUM 12
 #define GRIP_PARAMETER_NUM 8
 #define EXPERT_ARRAY_SIZE 3
