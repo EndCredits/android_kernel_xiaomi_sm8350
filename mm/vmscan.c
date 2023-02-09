@@ -5512,7 +5512,7 @@ again:
 	/* Record the subtree's reclaim efficiency */
 	vmpressure(sc->gfp_mask, sc->target_mem_cgroup, true,
 		   sc->nr_scanned - nr_scanned,
-		   sc->nr_reclaimed - nr_reclaimed, sc->order);
+		   sc->nr_reclaimed - nr_reclaimed);
 
 	if (sc->nr_reclaimed - nr_reclaimed)
 		reclaimable = true;
