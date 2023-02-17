@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0-only
 /*
  * Copyright (c) 2012-2021, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022-2023 Qualcomm Innovation Center, Inc. All rights reserved.
  */
 
 /* Uncomment this block to log an error on every VERIFY failure */
@@ -4832,7 +4832,7 @@ static int fastrpc_internal_munmap(struct fastrpc_file *fl,
 			"user application %s trying to unmap without initialization\n",
 			current->comm);
 		err = -EHOSTDOWN;
-		goto bail;
+		return err;
 	}
 	mutex_lock(&fl->internal_map_mutex);
 
