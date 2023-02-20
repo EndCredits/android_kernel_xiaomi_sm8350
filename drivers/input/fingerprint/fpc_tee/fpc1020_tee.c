@@ -215,7 +215,7 @@ static int request_vreg_gpio(struct fpc1020_data *fpc1020, bool enable)
 		rc = devm_request_threaded_irq(dev,
 					       gpio_to_irq(fpc1020->irq_gpio),
 					       NULL, fpc1020_irq_handler,
-					       fpc1020->irqf, dev_name(dev),
+					       fpc1020->irqf | IRQF_PERF_AFFINE, dev_name(dev),
 					       fpc1020);
 		if (rc) {
 			pr_err("fpc could not request irq %d\n",
