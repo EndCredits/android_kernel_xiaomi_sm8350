@@ -155,7 +155,7 @@ enum binder_stat_types {
 };
 
 struct binder_stats {
-	atomic_t br[_IOC_NR(BR_FROZEN_REPLY) + 1];
+	atomic_t br[_IOC_NR(BR_ONEWAY_SPAM_SUSPECT) + 1];
 	atomic_t bc[_IOC_NR(BC_REPLY_SG) + 1];
 	atomic_t obj_created[BINDER_STAT_COUNT];
 	atomic_t obj_deleted[BINDER_STAT_COUNT];
@@ -174,6 +174,7 @@ struct binder_work {
 	enum binder_work_type {
 		BINDER_WORK_TRANSACTION = 1,
 		BINDER_WORK_TRANSACTION_COMPLETE,
+		BINDER_WORK_TRANSACTION_ONEWAY_SPAM_SUSPECT,
 		BINDER_WORK_RETURN_ERROR,
 		BINDER_WORK_NODE,
 		BINDER_WORK_DEAD_BINDER,
@@ -366,6 +367,12 @@ struct binder_priority {
 	int prio;
 };
 
+enum binder_prio_state {
+	BINDER_PRIO_SET,	/* desired priority set */
+	BINDER_PRIO_PENDING,	/* initiated a saved priority restore */
+	BINDER_PRIO_ABORT,	/* abort the pending priority restore */
+};
+
 /**
  * struct binder_proc - binder process bookkeeping
  * @proc_node:            element for binder_procs list
@@ -432,6 +439,8 @@ struct binder_priority {
  * @outer_lock:           no nesting under innor or node lock
  *                        Lock order: 1) outer, 2) node, 3) inner
  * @binderfs_entry:       process-specific binderfs log file
+ * @oneway_spam_detection_enabled: process enabled oneway spam detection
+ *                        or not
  *
  * Bookkeeping structure for binder processes
  */
@@ -467,6 +476,7 @@ struct binder_proc {
 	spinlock_t inner_lock;
 	spinlock_t outer_lock;
 	struct dentry *binderfs_entry;
+	bool oneway_spam_detection_enabled;
 };
 
 /**
@@ -526,6 +536,12 @@ static inline const struct cred *binder_get_cred(struct binder_proc *proc)
  *                        when outstanding transactions are cleaned up
  *                        (protected by @proc->inner_lock)
  * @task:                 struct task_struct for this thread
+ * @prio_lock:            protects thread priority fields
+ * @prio_next:            saved priority to be restored next
+ *                        (protected by @prio_lock)
+ * @prio_state:           state of the priority restore process as
+ *                        defined by enum binder_prio_state
+ *                        (protected by @prio_lock)
  *
  * Bookkeeping structure for binder threads.
  */
@@ -546,6 +562,9 @@ struct binder_thread {
 	atomic_t tmp_ref;
 	bool is_dead;
 	struct task_struct *task;
+	spinlock_t prio_lock;
+	struct binder_priority prio_next;
+	enum binder_prio_state prio_state;
 };
 
 /**
@@ -582,6 +601,7 @@ struct binder_transaction {
 	struct binder_priority	priority;
 	struct binder_priority	saved_priority;
 	bool    set_priority_called;
+	bool    is_nested;
 	kuid_t	sender_euid;
 	struct list_head fd_fixups;
 	binder_uintptr_t security_ctx;

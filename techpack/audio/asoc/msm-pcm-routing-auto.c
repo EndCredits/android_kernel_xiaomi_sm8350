@@ -14416,6 +14416,11 @@ static const struct snd_kcontrol_new quat_tdm_rx_3_port_mixer_controls[] = {
 };
 
 static const struct snd_kcontrol_new quat_tdm_rx_7_port_mixer_controls[] = {
+	SOC_DOUBLE_EXT("TERT_TDM_TX_7", SND_SOC_NOPM,
+		MSM_BACKEND_DAI_QUAT_TDM_RX_7,
+		MSM_BACKEND_DAI_TERT_TDM_TX_7, 1, 0,
+		msm_routing_get_port_mixer,
+		msm_routing_put_port_mixer),
 	SOC_DOUBLE_EXT("QUAT_TDM_TX_7", SND_SOC_NOPM,
 		MSM_BACKEND_DAI_QUAT_TDM_RX_7,
 		MSM_BACKEND_DAI_QUAT_TDM_TX_7, 1, 0,
@@ -25214,7 +25219,7 @@ static const struct snd_kcontrol_new app_type_cfg_controls[] = {
 	0x7FFFFFFF, 0, 128, msm_routing_get_app_type_cfg_control,
 	msm_routing_put_app_type_cfg_control),
 	SOC_SINGLE_MULTI_EXT("App Type Gain", SND_SOC_NOPM, 0,
-	0x2000, 0, 4, NULL, msm_routing_put_app_type_gain_control)
+	0x7FFFFFFF, 0, 4, NULL, msm_routing_put_app_type_gain_control)
 };
 
 static int msm_routing_put_module_cfg_control(struct snd_kcontrol *kcontrol,
@@ -29209,6 +29214,7 @@ static const struct snd_soc_dapm_route intercon_tdm[] = {
 	{"QUAT_TDM_RX_3 Port Mixer", "SEN_TDM_TX_3", "SEN_TDM_TX_3"},
 	{"QUAT_TDM_RX_3", NULL, "QUAT_TDM_RX_3 Port Mixer"},
 
+	{"QUAT_TDM_RX_7 Port Mixer", "TERT_TDM_TX_7", "TERT_TDM_TX_7"},
 	{"QUAT_TDM_RX_7 Port Mixer", "QUAT_TDM_TX_7", "QUAT_TDM_TX_7"},
 	{"QUAT_TDM_RX_7 Port Mixer", "QUIN_TDM_TX_7", "QUIN_TDM_TX_7"},
 	{"QUAT_TDM_RX_7", NULL, "QUAT_TDM_RX_7 Port Mixer"},
