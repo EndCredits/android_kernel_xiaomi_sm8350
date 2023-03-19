@@ -119,6 +119,11 @@ clean(){
     rm -rf $TARGET_OUT;
 }
 
+update_gki_defconfig(){
+    echo "Updating lahaina-qgki_defconfig from latest source"
+    ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- REAL_CC=clang CC=clang CLANG_TRIPLE=aarch64-linux-gnu- LD=ld.lld LLVM=1 scripts/gki/generate_defconfig.sh    vendor/lahaina-qgki_defconfig
+}
+
 display_help() {
         echo "build.sh: A very simple Kernel build helper"
         echo "usage: build.sh <build option> <device>"
@@ -131,6 +136,7 @@ display_help() {
         echo "    savedefconfig   Save the defconfig file to source tree."
         echo "    kernelonly      Only build kernel image"
         echo "    defconfig       Only build kernel defconfig"
+        echo "    updateconf      Update defconfig for lahaina-qgki_defconfig"
         echo "    help ( -h )     Print help information."
         echo
 }
@@ -177,6 +183,9 @@ main(){
     then
         DEFCONFIG_NAME="vendor/lahaina-qgki_defconfig vendor/xiaomi_QGKI.config vendor/${TARGET_DEVICE}_QGKI.config"
         make_defconfig;
+    elif [ $1 == "updateconf" ]
+    then
+        update_gki_defconfig;
     else
         display_help
     fi
