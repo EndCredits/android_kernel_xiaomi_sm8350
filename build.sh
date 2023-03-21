@@ -108,6 +108,14 @@ save_defconfig(){
 
 }
 
+update_gki_defconfig(){
+    echo "------------------------------";
+    echo "Updating GKI defconfig........";
+    echo "------------------------------";
+    
+    ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- REAL_CC=clang CC=clang CLANG_TRIPLE=aarch64-linux-gnu- LD=ld.lld LLVM=1 scripts/gki/generate_defconfig.sh vendor/lahaina-qgki_defconfig;
+}
+
 clean(){
     echo "Clean source tree and build files..."
     make mrproper -j$THREAD;
@@ -129,6 +137,7 @@ main(){
 #         echo "    savedefconfig   Save the defconfig file to source tree."
         echo "    kernelonly      Only build kernel image"
         echo "    defconfig       Only build kernel defconfig"
+        echo "    upgkidefconf    Update GKI defconfig for lahaina"
         echo "    help ( -h )     Print help information."
         echo
 #    elif [ $1 == "savedefconfig" ]
@@ -157,6 +166,9 @@ main(){
     elif [ $1 == "defconfig" ]
     then
         make_defconfig;
+    elif [ $1 == "upgkidefconf" ]
+    then
+        update_gki_defconfig
     else
         echo "Incorrect usage. Please run: "
         echo "  bash build.sh help (or -h) "
