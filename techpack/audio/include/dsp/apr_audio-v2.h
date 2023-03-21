@@ -30,6 +30,11 @@ struct param_outband {
 /* Instance ID definitions */
 #define INSTANCE_ID_0 0x0000
 
+struct adm_register_event {
+	struct apr_hdr hdr;
+	__u8 payload[0];
+} __packed;
+
 struct mem_mapping_hdr {
 	/*
 	 * LSW of parameter data payload address. Supported values: any.
@@ -135,6 +140,10 @@ struct module_instance_info {
 
 #define ADM_CMD_MATRIX_MAP_ROUTINGS_V5 0x00010325
 #define ADM_CMD_STREAM_DEVICE_MAP_ROUTINGS_V5 0x0001033D
+
+#define ADM_CMD_REGISTER_EVENT  0x00010365
+#define ADM_PP_EVENT            0x00010366
+
 /* Enumeration for an audio Rx matrix ID.*/
 #define ADM_MATRIX_ID_AUDIO_RX              0
 
@@ -324,9 +333,11 @@ struct adm_cmd_device_open_v5 {
  */
 
 	u16                  endpoint_id_2;
-/* Logical and physical endpoint ID 2 for a voice processor
- * Tx block.
- * This is not applicable to audio COPP.
+/* Endpoint 2 is set with 0xFFFF by default.
+ * In cases of ECREF, Endpoint 2 can be set with the ecref AFE port id,
+ * which will be connected to the TX block.
+ * ECREF data is given as input to the TX block.
+ * Endpoint 2 is applicable to audio CoPreP.
  * Supported values:
  * - AFE Rx port
  * - 0xFFFF -- Endpoint 2 is unavailable and the voice
@@ -414,9 +425,11 @@ struct adm_cmd_device_open_v6 {
  */
 
 	u16                  endpoint_id_2;
-/* Logical and physical endpoint ID 2 for a voice processor
- * Tx block.
- * This is not applicable to audio COPP.
+/* Endpoint 2 is set with 0xFFFF by default.
+ * In cases of ECREF, Endpoint 2 can be set with the ecref AFE port id,
+ * which will be connected to the TX block.
+ * ECREF data is given as input to the TX block.
+ * Endpoint 2 is applicable to audio CoPreP.
  * Supported values:
  * - AFE Rx port
  * - 0xFFFF -- Endpoint 2 is unavailable and the voice
@@ -580,9 +593,11 @@ struct adm_cmd_device_open_v8 {
  */
 
 	u16                  endpoint_id_2;
-/* Logical and physical endpoint ID 2 for a voice processor
- * Tx block.
- * This is not applicable to audio COPP.
+/* Endpoint 2 is set with 0xFFFF by default.
+ * In cases of ECREF, Endpoint 2 can be set with the ecref AFE port id,
+ * which will be connected to the TX block.
+ * ECREF data is given as input to the TX block.
+ * Endpoint 2 is applicable to audio CoPreP.
  * Supported values:
  * - AFE Rx port
  * - 0xFFFF -- Endpoint 2 is unavailable and the voice
@@ -666,6 +681,26 @@ struct dsp_stream_callback_list {
 };
 
 struct dsp_stream_callback_prtd {
+	uint16_t event_count;
+	struct list_head event_queue;
+	spinlock_t prtd_spin_lock;
+};
+
+#define DSP_ADM_CALLBACK "ADSP COPP Callback Event"
+#define DSP_ADM_CALLBACK_QUEUE_SIZE 1024
+
+struct dsp_adm_callback_list {
+	struct list_head list;
+	struct msm_adsp_event_data event;
+};
+
+struct adm_usr_info {
+	u32 service_id;
+	u32 reserved;
+	u32 token_coppidx;
+};
+
+struct dsp_adm_callback_prtd {
 	uint16_t event_count;
 	struct list_head event_queue;
 	spinlock_t prtd_spin_lock;
