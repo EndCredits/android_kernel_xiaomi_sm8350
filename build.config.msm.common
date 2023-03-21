@@ -12,6 +12,10 @@ arch/${ARCH}/boot/dts/${DTB_DIR}/*.dtb*
 "
 
 ################################################################################
+## Globally enable user build variant
+export TARGET_BUILD_VARIANT=user
+
+################################################################################
 ## DT Overlay
 function add_dt_overlay_defconfig() {
 	${KERNEL_DIR}/scripts/config --file ${OUT_DIR}/.config \
