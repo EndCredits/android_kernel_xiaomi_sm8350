@@ -574,7 +574,7 @@ static unsigned long get_anon_movable_pages(
 		if (!ret) {
 			list_add_tail(&page->lru, list);
 			inc_node_page_state(page, NR_ISOLATED_ANON +
-					page_is_file_cache(page));
+					page_is_file_lru(page));
 			++fc->nr_migrate_pages;
 		}
 
