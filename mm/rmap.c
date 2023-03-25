@@ -1942,18 +1942,9 @@ static void rmap_walk_file(struct page *page, struct rmap_walk_control *rwc,
 
 	pgoff_start = page_to_pgoff(page);
 	pgoff_end = pgoff_start + hpage_nr_pages(page) - 1;
-	if (!locked) {
-		if (i_mmap_trylock_read(mapping))
-			goto lookup;
-
-		if (rwc->try_lock) {
-			rwc->contended = true;
-			return;
-		}
-
+	if (!locked)
 		i_mmap_lock_read(mapping);
-	}
-lookup:
+
 	if (rwc->target_vma) {
 		address = vma_address(page, rwc->target_vma);
 		rwc->rmap_one(page, rwc->target_vma, address, rwc->arg);
