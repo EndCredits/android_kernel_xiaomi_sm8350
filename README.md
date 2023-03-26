@@ -1,3 +1,23 @@
+# Common kernel for xiaomi sm8350 devices ( mainly renoir )
+
+## Current kernel features:
+
+- [EROFS backport](https://github.com/EndCredits/android_kernel_xiaomi_sm8350/tree/feat-erofs)
+- [Multi-Gen LRU/userfatalfd/mm changes](https://github.com/EndCredits/android_kernel_xiaomi_sm8350/tree/feat-mm)
+- [CLO upstream merge](https://github.com/EndCredits/android_kernel_xiaomi_sm8350/tree/baseline)
+
+## Feats planning to be added
+
+- Mainline ZRAM backport [WIP]
+- Data Access Monitor backport [WIP]
+- devfreq_boost && Kprofile
+- Crypto libs update [WIP]
+- ACK Merge
+- Support standalone install by Anykernel3 [WIP]
+- Kernel SU
+- OnePlus CPU Effiency driver
+- More comming...
+
 # How do I submit patches to Android Common Kernels
 
 1. BEST: Make all of your changes to upstream Linux. If appropriate, backport to the stable releases.
