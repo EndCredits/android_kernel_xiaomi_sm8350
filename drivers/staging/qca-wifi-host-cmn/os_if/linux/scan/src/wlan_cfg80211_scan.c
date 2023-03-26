@@ -612,6 +612,10 @@ int wlan_cfg80211_sched_scan_start(struct wlan_objmgr_vdev *vdev,
 
 	wlan_hdd_sched_scan_update_relative_rssi(req, request);
 
+	req->fast_scan_period = 45000;
+	req->fast_scan_max_cycles = 7;
+	req->slow_scan_period = 480000;
+
 	psoc = wlan_pdev_get_psoc(pdev);
 	ucfg_scan_register_pno_cb(psoc,
 		wlan_cfg80211_pno_callback, NULL);
