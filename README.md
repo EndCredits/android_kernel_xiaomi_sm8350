@@ -9,7 +9,9 @@
 ## Feats planning to be added
 
 - Mainline ZRAM backport [WIP]
-- Data Access Monitor backport [WIP]
+- [Data Access Monitor backport [WIP]](https://github.com/EndCredits/android_kernel_xiaomi_sm8350/tree/feat-damon)
+- Maple Tree features
+- RCU Power Save
 - devfreq_boost && Kprofile
 - Crypto libs update [WIP]
 - ACK Merge
