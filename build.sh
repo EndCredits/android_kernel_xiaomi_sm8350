@@ -128,6 +128,49 @@ update_gki_defconfig(){
     ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- REAL_CC=clang CC=clang CLANG_TRIPLE=aarch64-linux-gnu- LD=ld.lld LLVM=1 scripts/gki/generate_defconfig.sh    vendor/lahaina-qgki_defconfig
 }
 
+generate_modules(){
+    MODULES_DIR=$TARGET_OUT/modules_inst
+    mkdir -p $MODULES_DIR
+    make $FINAL_KERNEL_BUILD_PARA INSTALL_MOD_PATH=modules_inst INSTALL_MOD_STRIP=1 modules_install
+}
+
+build_vendor_dlkm(){
+    echo "------------------------------";
+    echo "Generating vendor_dlkm.img ...";
+    echo "------------------------------";
+
+    MKE2FS_CONF=$(pwd)/scripts/dlkm/mke2fs.conf
+    KSOURCE=$(pwd)
+    
+    echo "-1 Modules installing"
+    #generate_modules
+
+    cd $TARGET_OUT
+    loaddeps=(modules.order modules.dep modules.softdep)
+
+    mkdir -p vendor_dlkm/lib/modules vendor_dlkm/etc
+
+    find ./modules_inst/lib/modules/5.4* -name "*.ko" -exec cp {} ./vendor_dlkm/lib/modules/ \;
+    for items in ${loaddeps[*]}; do
+        find ./modules_inst/lib/modules/5.4* -name "$items" -exec cp {} ./vendor_dlkm/lib/modules \;
+    done
+    cp -r $KSOURCE/scripts/dlkm/etc/* ./vendor_dlkm/etc/
+    
+    echo "-2 Processing modules dependencies"
+    sed -i 's/.*\///g' vendor_dlkm/lib/modules/modules.order
+    sed -i 's/\(kernel\/[^: ]*\/\)\([^: ]*\.ko\)/\/vendor\/lib\/modules\/\2/g' vendor_dlkm/lib/modules/modules.dep
+    
+    mv $TARGET_OUT/vendor_dlkm/lib/modules/modules.order $TARGET_OUT/vendor_dlkm/lib/modules/modules.load
+
+    echo "-3 Creating vendor_dlkm image"
+    dd if=/dev/zero of=$TARGET_OUT/vendor_dlkm.img bs=1M count=128
+    MKE2FS_CONFIG=$MKE2FS_CONF mke2fs -O "extent huge_file" -T largefile -L vendor_dlkm -d vendor_dlkm vendor_dlkm.img
+    e2fsck -f vendor_dlkm.img
+    resize2fs -M vendor_dlkm.img
+
+    cd $KSOURCE
+}
+
 main(){
     if [ $1 == "help" -o $1 == "-h" ]
     then
@@ -154,6 +197,7 @@ main(){
         make_defconfig;
         build_kernel;
         link_all_dtb_files;
+        build_vendor_dlkm;
 #        generate_flashable;
 #    elif [ $1 == "flashable" ]
 #    then
@@ -174,6 +218,9 @@ main(){
     elif [ $1 == "upgkidefconf" ]
     then
         update_gki_defconfig
+    elif [ $1 == "build_dlkm" ]
+    then
+        build_vendor_dlkm
     else
         echo "Incorrect usage. Please run: "
         echo "  bash build.sh help (or -h) "
