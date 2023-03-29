@@ -3080,7 +3080,7 @@ void call_rcu(struct rcu_head *head, rcu_callback_t func)
 	}
 	head->func = func;
 	head->next = NULL;
-	kasan_record_aux_stack_noalloc(head);
+	kasan_record_aux_stack(head);
 	local_irq_save(flags);
 	rdp = this_cpu_ptr(&rcu_data);
 

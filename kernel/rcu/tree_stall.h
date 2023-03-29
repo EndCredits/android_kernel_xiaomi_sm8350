@@ -282,15 +282,10 @@ static int rcu_print_task_stall(struct rcu_node *rnp, unsigned long flags)
 			break;
 	}
 	raw_spin_unlock_irqrestore_rcu_node(rnp, flags);
-<<<<<<< HEAD
-	for (i--; i; i--) {
-		t = ts[i];
-		if (!try_invoke_on_locked_down_task(t, check_slow_task, &rscr))
-=======
+
 	while (i) {
 		t = ts[--i];
 		if (task_call_func(t, check_slow_task, &rscr))
->>>>>>> 2b5525f4a316 (sched,rcu: Rework try_invoke_on_locked_down_task())
 			pr_cont(" P%d", t->pid);
 		else
 			pr_cont(" P%d/%d:%c%c%c%c",
