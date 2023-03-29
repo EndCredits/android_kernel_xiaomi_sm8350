@@ -33,6 +33,7 @@ FINAL_KERNEL_BUILD_PARA="ARCH=$TARGET_ARCH \
 TARGET_KERNEL_FILE=arch/arm64/boot/Image;
 TARGET_KERNEL_DTB=arch/arm64/boot/dtb;
 TARGET_KERNEL_DTBO=arch/arm64/boot/dtbo.img
+TARGET_VENDOR_DLKM=vendor_dlkm.img
 TARGET_KERNEL_NAME=Kernel;
 TARGET_KERNEL_MOD_VERSION=$(make kernelversion)
 
@@ -40,7 +41,7 @@ DEFCONFIG_PATH=arch/arm64/configs
 DEFCONFIG_NAME="vendor/lahaina-qgki_defconfig vendor/xiaomi_QGKI.config vendor/renoir_QGKI.config";
 
 START_SEC=$(date +%s);
-CURRENT_TIME=$(date '+%Y-%m%d%H%M');
+CURRENT_TIME=$(date '+%Y%m%d-%H%M');
 
 link_all_dtb_files(){
     find $TARGET_OUT/arch/arm64/boot/dts/vendor/qcom -name '*.dtb' -exec cat {} + > $TARGET_OUT/arch/arm64/boot/dtb;
@@ -66,32 +67,39 @@ build_kernel(){
 
 }
 
-# generate_flashable(){
-#     echo "------------------------------";
-#     echo " Generating Flashable Kernel";
-#     echo "------------------------------";
-# 
-#     cd $TARGET_OUT;
-#     
-#     echo ' Getting AnyKernel ';
-#     curl $ANYKERNEL_URL -o $ANYKERNEL_FILE;
-# 
-#     unzip -o $ANYKERNEL_FILE;
-# 
-#     echo ' Removing old package file ';
-#     rm -rf $ANYKERNEL_PATH/$TARGET_KERNEL_NAME*;
-# 
-#     echo ' Copying Kernel File '; 
-#     cp -r $TARGET_KERNEL_FILE $ANYKERNEL_PATH/;
-#     cp -r $TARGET_KERNEL_DTB $ANYKERNEL_PATH/;
-#     cp -r $TARGET_KERNEL_DTBO $ANYKERNEL_PATH/;
-# 
-#     echo ' Packaging flashable Kernel ';
-#     cd $ANYKERNEL_PATH;
-#     zip -q -r $TARGET_KERNEL_NAME-$CURRENT_TIME-$TARGET_KERNEL_MOD_VERSION.zip *;
-#
-#    echo " Target File:  $TARGET_OUT/$ANYKERNEL_PATH/$TARGET_KERNEL_NAME-$CURRENT_TIME-$TARGET_KERNEL_MOD_VERSION.zip ";
-# }
+generate_flashable(){
+    echo "------------------------------";
+    echo " Generating Flashable Kernel";
+    echo "------------------------------";
+
+    AK3_PATH=$TARGET_OUT/ak3
+    REC_RES=(focaltech_touch.ko goodix_core.ko hwid.ko msm_drm.ko xiaomi_touch.ko)
+ 
+    echo ' Removing old package file ';
+    rm -rf $AK3_PATH;
+
+    echo ' Getting AnyKernel ';
+    cp -r ./tools/ak3 $AK3_PATH;
+    mkdir -p $TARGET_OUT/./ak3/vendor_ramdisk/lib/modules
+    
+    cd $TARGET_OUT;
+    ANYKERNEL_PATH=./ak3
+
+    echo ' Copying Kernel File '; 
+    cp -r $TARGET_KERNEL_FILE $ANYKERNEL_PATH/;
+    cp -r $TARGET_KERNEL_DTB $ANYKERNEL_PATH/;
+    cp -r $TARGET_KERNEL_DTBO $ANYKERNEL_PATH/;
+    cp -r $TARGET_VENDOR_DLKM $ANYKERNEL_PATH/;
+    for item in ${REC_RES[*]}; do
+        find vendor_dlkm/ -name $item -exec cp {} ./ak3/vendor_ramdisk/lib/modules \;
+    done
+
+    echo ' Packaging flashable Kernel ';
+    cd $ANYKERNEL_PATH;
+    zip -q -r $TARGET_KERNEL_NAME-$CURRENT_TIME-$TARGET_KERNEL_MOD_VERSION.zip *;
+
+   echo " Target File:  $TARGET_OUT/$ANYKERNEL_PATH/$TARGET_KERNEL_NAME-$CURRENT_TIME-$TARGET_KERNEL_MOD_VERSION.zip ";
+}
 
 save_defconfig(){
     echo "------------------------------";
@@ -143,7 +151,7 @@ build_vendor_dlkm(){
     KSOURCE=$(pwd)
     
     echo "-1 Modules installing"
-    #generate_modules
+    generate_modules
 
     cd $TARGET_OUT
     loaddeps=(modules.order modules.dep modules.softdep)
@@ -181,7 +189,7 @@ main(){
         echo "    all             Perform a build without cleaning."
         echo "    cleanbuild      Clean the source tree and build files then perform a all build."
         echo
-#         echo "    flashable       Only generate the flashable zip file. Don't use it before you have built once."
+        echo "    flashable       Only generate the flashable zip file. Don't use it before you have built once."
 #         echo "    savedefconfig   Save the defconfig file to source tree."
         echo "    kernelonly      Only build kernel image"
         echo "    defconfig       Only build kernel defconfig"
@@ -198,10 +206,10 @@ main(){
         build_kernel;
         link_all_dtb_files;
         build_vendor_dlkm;
-#        generate_flashable;
-#    elif [ $1 == "flashable" ]
-#    then
-#        generate_flashable;
+        generate_flashable;
+    elif [ $1 == "flashable" ]
+    then
+        generate_flashable;
     elif [ $1 == "kernelonly" ]
     then
         make_defconfig
@@ -211,6 +219,7 @@ main(){
         make_defconfig
         build_kernel
         link_all_dtb_files
+        build_vendor_dlkm
 #         generate_flashable
     elif [ $1 == "defconfig" ]
     then
