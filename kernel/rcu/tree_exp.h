@@ -526,11 +526,7 @@ static void synchronize_rcu_expedited_wait(void)
 			return;
 		if (rcu_stall_is_suppressed())
 			continue;
-<<<<<<< HEAD
-		panic_on_rcu_stall();
-=======
 		trace_rcu_stall_warning(rcu_state.name, TPS("ExpeditedStall"));
->>>>>>> 66dfb77397db (Merge branches 'doc.2022.06.21a', 'fixes.2022.07.19a', 'nocb.2022.07.19a', 'poll.2022.07.21a', 'rcu-tasks.2022.06.21a' and 'torture.2022.06.21a' into HEAD)
 		pr_err("INFO: %s detected expedited stalls on CPUs/tasks: {",
 		       rcu_state.name);
 		ndetected = 0;

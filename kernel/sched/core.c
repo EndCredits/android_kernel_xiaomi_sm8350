@@ -2900,7 +2900,7 @@ out:
 int task_call_func(struct task_struct *p, task_call_f func, void *arg)
 {
 	struct rq_flags rf;
-	int ret;
+	int ret = 0;
 	struct rq *rq;
 
 	lockdep_assert_irqs_enabled();
@@ -8588,7 +8588,7 @@ struct cgroup_subsys cpu_cgrp_subsys = {
 
 void dump_cpu_task(int cpu)
 {
-	if (cpu == smp_processor_id() && in_hardirq()) {
+	if (cpu == smp_processor_id() && in_irq()) {
 		struct pt_regs *regs;
 
 		regs = get_irq_regs();
