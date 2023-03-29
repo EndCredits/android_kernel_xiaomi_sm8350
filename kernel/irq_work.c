@@ -110,7 +110,7 @@ bool irq_work_queue_on(struct irq_work *work, int cpu)
 	if (cpu != smp_processor_id()) {
 		/* Arch remote IPI send/receive backend aren't NMI safe */
 		WARN_ON_ONCE(in_nmi());
-		if (llist_add(&work->node.llist), &per_cpu(raised_list, cpu)))
+		if (llist_add(&work->node.llist, &per_cpu(raised_list, cpu)))
 			arch_send_call_function_single_ipi(cpu);
 	} else {
 		__irq_work_queue_local(work);
@@ -227,11 +227,7 @@ void irq_work_sync(struct irq_work *work)
 {
 	lockdep_assert_irqs_enabled();
 
-<<<<<<< HEAD
-	while (work->flags & IRQ_WORK_BUSY)
-=======
 	while (irq_work_is_busy(work))
->>>>>>> 62474f234c62 (irq_work: Cleanup)
 		cpu_relax();
 }
 EXPORT_SYMBOL_GPL(irq_work_sync);
