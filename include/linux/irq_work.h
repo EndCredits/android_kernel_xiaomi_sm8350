@@ -3,6 +3,7 @@
 #define _LINUX_IRQ_WORK_H
 
 #include <linux/llist.h>
+#include <linux/smp.h>
 
 /*
  * An entry can be in one of four states:
