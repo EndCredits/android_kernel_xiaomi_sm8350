@@ -154,7 +154,7 @@ build_vendor_dlkm(){
     generate_modules
 
     cd $TARGET_OUT
-    loaddeps=(modules.order modules.dep modules.softdep)
+    loaddeps=(modules.order modules.dep modules.softdep modules.alias)
 
     mkdir -p vendor_dlkm/lib/modules vendor_dlkm/etc
 
