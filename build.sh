@@ -153,6 +153,8 @@ build_vendor_dlkm(){
 
     MKE2FS_CONF=$(pwd)/scripts/dlkm/mke2fs.conf
     KSOURCE=$(pwd)
+
+    rm -rf $TARGET_OUT/modules_inst
     
     echo "-1 Modules installing"
     generate_modules
