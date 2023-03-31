@@ -223,7 +223,7 @@ main(){
         build_kernel
         link_all_dtb_files
         build_vendor_dlkm
-#         generate_flashable
+        generate_flashable
     elif [ $1 == "defconfig" ]
     then
         make_defconfig;
