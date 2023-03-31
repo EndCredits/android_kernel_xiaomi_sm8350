@@ -128,6 +128,10 @@ update_gki_defconfig(){
     ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- REAL_CC=clang CC=clang CLANG_TRIPLE=aarch64-linux-gnu- LD=ld.lld LLVM=1 scripts/gki/generate_defconfig.sh    vendor/lahaina-qgki_defconfig
 }
 
+ksu_prepare(){
+    echo "obj-y += kernelsu/" >> drivers/Makefile
+}
+
 main(){
     if [ $1 == "help" -o $1 == "-h" ]
     then
@@ -174,6 +178,13 @@ main(){
     elif [ $1 == "upgkidefconf" ]
     then
         update_gki_defconfig
+    elif [ $1 == "buildksu" ]
+    then
+        make_defconfig
+        ksu_prepare
+        build_kernel
+        link_all_dtb_files
+        generate_flashable
     else
         echo "Incorrect usage. Please run: "
         echo "  bash build.sh help (or -h) "
