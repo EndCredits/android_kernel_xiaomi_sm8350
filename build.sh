@@ -20,9 +20,6 @@ TARGET_CROSS_COMPILE_COMPAT=arm-linux-gnueabi-;
 THREAD=$(nproc --all);
 CC_ADDITIONAL_FLAGS="LLVM_IAS=1 LLVM=1";
 TARGET_OUT="../out";
-TARGET_BUILD_DEVICE=renoir
-
-export TARGET_DEVICE=renoir
 
 FINAL_KERNEL_BUILD_PARA="ARCH=$TARGET_ARCH \
                          CC=$TARGET_CC \
@@ -30,9 +27,8 @@ FINAL_KERNEL_BUILD_PARA="ARCH=$TARGET_ARCH \
                          CROSS_COMPILE_COMPAT=$TARGET_CROSS_COMPILE_COMPAT \
                          CLANG_TRIPLE=$TARGET_CLANG_TRIPLE \
                          $CC_ADDITIONAL_FLAGS \
-                         -j$THREAD \
-                         O=$TARGET_OUT \
-                         TARGET_DEVICE=$TARGET_BUILD_DEVICE ";
+                         -j$THREAD
+                         O=$TARGET_OUT";
 
 TARGET_KERNEL_FILE=arch/arm64/boot/Image;
 TARGET_KERNEL_DTB=arch/arm64/boot/dtb;
@@ -76,8 +72,6 @@ generate_flashable(){
     echo " Generating Flashable Kernel";
     echo "------------------------------";
 
-    AOSP_DIR=/srv/media/WD/pe/out/target/product/renoir/obj/PACKAGING/target_files_intermediates/aosp_renoir-target_files-eng.credits/IMAGES/
-
     AK3_PATH=$TARGET_OUT/ak3
     REC_RES=(focaltech_touch.ko goodix_core.ko hwid.ko msm_drm.ko xiaomi_touch.ko)
  
@@ -87,6 +81,7 @@ generate_flashable(){
     echo ' Getting AnyKernel ';
     cp -r ./tools/ak3 $AK3_PATH;
     mkdir -p $TARGET_OUT/./ak3/vendor_ramdisk/lib/modules
+    mkdir -p $TARGET_OUT/./ak3/modules/vendor_dlkm/lib/
     
     cd $TARGET_OUT;
     ANYKERNEL_PATH=./ak3
@@ -95,7 +90,7 @@ generate_flashable(){
     cp -r $TARGET_KERNEL_FILE $ANYKERNEL_PATH/;
     cp -r $TARGET_KERNEL_DTB $ANYKERNEL_PATH/;
     cp -r $TARGET_KERNEL_DTBO $ANYKERNEL_PATH/;
-    cp -r $AOSP_DIR/$TARGET_VENDOR_DLKM $ANYKERNEL_PATH/;
+    cp -r $TARGET_OUT/vendor_dlkm/lib/modules $TARGET_OUT/ak3/modules/vendor_dlkm/lib/
     for item in ${REC_RES[*]}; do
         find vendor_dlkm/ -name $item -exec cp {} ./ak3/vendor_ramdisk/lib/modules \;
     done
@@ -150,8 +145,30 @@ generate_modules(){
 
 build_vendor_dlkm(){
     echo "------------------------------";
-    echo "Using prebuilt vendor_dlkm.img";
+    echo "Generating vendor_dlkm.img ...";
     echo "------------------------------";
+
+    MKE2FS_CONF=$(pwd)/scripts/dlkm/mke2fs.conf
+    KSOURCE=$(pwd)
+    
+    echo "-1 Modules installing"
+    generate_modules
+
+    cd $TARGET_OUT
+    loaddeps=(modules.alias modules.dep modules.softdep)
+
+    mkdir -p vendor_dlkm/lib/modules vendor_dlkm/etc
+
+    find ./modules_inst/lib/modules/5.4* -name "*.ko" -exec cp {} ./vendor_dlkm/lib/modules/ \;
+    for items in ${loaddeps[*]}; do
+        find ./modules_inst/lib/modules/5.4* -name "$items" -exec cp {} ./vendor_dlkm/lib/modules \;
+    done
+    cp -r $KSOURCE/scripts/dlkm/etc/* ./vendor_dlkm/etc/
+    
+    echo "-2 Processing modules dependencies"
+    sed -i 's/\(kernel\/[^: ]*\/\)\([^: ]*\.ko\)/\/vendor\/lib\/modules\/\2/g' vendor_dlkm/lib/modules/modules.dep
+
+    cd $KSOURCE
 }
 
 main(){
@@ -195,7 +212,7 @@ main(){
         build_kernel
         link_all_dtb_files
         build_vendor_dlkm
-        generate_flashable
+#         generate_flashable
     elif [ $1 == "defconfig" ]
     then
         make_defconfig;
