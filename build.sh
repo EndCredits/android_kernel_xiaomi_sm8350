@@ -154,7 +154,7 @@ build_vendor_dlkm(){
     generate_modules
 
     cd $TARGET_OUT
-    loaddeps=(modules.order modules.dep modules.softdep modules.alias)
+    loaddeps=(modules.dep modules.softdep modules.alias)
 
     mkdir -p vendor_dlkm/lib/modules vendor_dlkm/etc
 
@@ -165,11 +165,8 @@ build_vendor_dlkm(){
     cp -r $KSOURCE/scripts/dlkm/etc/* ./vendor_dlkm/etc/
     
     echo "-2 Processing modules dependencies"
-    sed -i 's/.*\///g' vendor_dlkm/lib/modules/modules.order
     sed -i 's/\(kernel\/[^: ]*\/\)\([^: ]*\.ko\)/\/vendor\/lib\/modules\/\2/g' vendor_dlkm/lib/modules/modules.dep
     
-    mv $TARGET_OUT/vendor_dlkm/lib/modules/modules.order $TARGET_OUT/vendor_dlkm/lib/modules/modules.load
-
     echo "-3 Creating vendor_dlkm image"
     dd if=/dev/zero of=$TARGET_OUT/vendor_dlkm.img bs=1M count=128
     MKE2FS_CONFIG=$MKE2FS_CONF mke2fs -O "extent huge_file" -T largefile -L vendor_dlkm -d vendor_dlkm vendor_dlkm.img
