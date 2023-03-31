@@ -81,7 +81,6 @@ generate_flashable(){
     echo ' Getting AnyKernel ';
     cp -r ./tools/ak3 $AK3_PATH;
     mkdir -p $TARGET_OUT/./ak3/vendor_ramdisk/lib/modules
-    mkdir -p $TARGET_OUT/./ak3/modules/vendor_dlkm/lib/
     
     cd $TARGET_OUT;
     ANYKERNEL_PATH=./ak3
@@ -90,7 +89,7 @@ generate_flashable(){
     cp -r $TARGET_KERNEL_FILE $ANYKERNEL_PATH/;
     cp -r $TARGET_KERNEL_DTB $ANYKERNEL_PATH/;
     cp -r $TARGET_KERNEL_DTBO $ANYKERNEL_PATH/;
-    cp -r $TARGET_OUT/vendor_dlkm/lib/modules $TARGET_OUT/ak3/modules/vendor_dlkm/lib/
+    cp -r $TARGET_VENDOR_DLKM $ANYKERNEL_PATH/;
     for item in ${REC_RES[*]}; do
         find vendor_dlkm/ -name $item -exec cp {} ./ak3/vendor_ramdisk/lib/modules \;
     done
@@ -155,7 +154,7 @@ build_vendor_dlkm(){
     generate_modules
 
     cd $TARGET_OUT
-    loaddeps=(modules.alias modules.dep modules.softdep)
+    loaddeps=(modules.order modules.dep modules.softdep)
 
     mkdir -p vendor_dlkm/lib/modules vendor_dlkm/etc
 
@@ -166,7 +165,16 @@ build_vendor_dlkm(){
     cp -r $KSOURCE/scripts/dlkm/etc/* ./vendor_dlkm/etc/
     
     echo "-2 Processing modules dependencies"
+    sed -i 's/.*\///g' vendor_dlkm/lib/modules/modules.order
     sed -i 's/\(kernel\/[^: ]*\/\)\([^: ]*\.ko\)/\/vendor\/lib\/modules\/\2/g' vendor_dlkm/lib/modules/modules.dep
+    
+    mv $TARGET_OUT/vendor_dlkm/lib/modules/modules.order $TARGET_OUT/vendor_dlkm/lib/modules/modules.load
+
+    echo "-3 Creating vendor_dlkm image"
+    dd if=/dev/zero of=$TARGET_OUT/vendor_dlkm.img bs=1M count=128
+    MKE2FS_CONFIG=$MKE2FS_CONF mke2fs -O "extent huge_file" -T largefile -L vendor_dlkm -d vendor_dlkm vendor_dlkm.img
+    e2fsck -f vendor_dlkm.img
+    resize2fs -M vendor_dlkm.img
 
     cd $KSOURCE
 }
