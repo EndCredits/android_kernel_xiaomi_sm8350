@@ -20,6 +20,9 @@ TARGET_CROSS_COMPILE_COMPAT=arm-linux-gnueabi-;
 THREAD=$(nproc --all);
 CC_ADDITIONAL_FLAGS="LLVM_IAS=1 LLVM=1";
 TARGET_OUT="../out";
+TARGET_DEVICE=renoir
+
+export TARGET_PRODUCT=$TARGET_DEVICE
 
 FINAL_KERNEL_BUILD_PARA="ARCH=$TARGET_ARCH \
                          CC=$TARGET_CC \
@@ -27,8 +30,9 @@ FINAL_KERNEL_BUILD_PARA="ARCH=$TARGET_ARCH \
                          CROSS_COMPILE_COMPAT=$TARGET_CROSS_COMPILE_COMPAT \
                          CLANG_TRIPLE=$TARGET_CLANG_TRIPLE \
                          $CC_ADDITIONAL_FLAGS \
-                         -j$THREAD
-                         O=$TARGET_OUT";
+                         -j$THREAD \
+                         O=$TARGET_OUT \
+                         TARGET_PRODUCT=$TARGET_DEVICE";
 
 TARGET_KERNEL_FILE=arch/arm64/boot/Image;
 TARGET_KERNEL_DTB=arch/arm64/boot/dtb;
