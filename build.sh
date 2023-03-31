@@ -182,6 +182,11 @@ build_vendor_dlkm(){
     cd $KSOURCE
 }
 
+use_prebuilt_dlkm(){
+    DLKM_BUILD_PATH=/srv/media/WD/pe/out/target/product/renoir/obj/PACKAGING/target_files_intermediates/aosp_renoir-target_files-eng.credits/IMAGES/
+    cp $DLKM_BUILD_PATH/$TARGET_VENDOR_DLKM $TARGET_OUT
+}
+
 main(){
     if [ $1 == "help" -o $1 == "-h" ]
     then
@@ -208,7 +213,7 @@ main(){
         make_defconfig;
         build_kernel;
         link_all_dtb_files;
-        build_vendor_dlkm;
+        use_prebuilt_dlkm;
         generate_flashable;
     elif [ $1 == "flashable" ]
     then
@@ -222,7 +227,7 @@ main(){
         make_defconfig
         build_kernel
         link_all_dtb_files
-        build_vendor_dlkm
+        use_prebuilt_dlkm
         generate_flashable
     elif [ $1 == "defconfig" ]
     then
@@ -232,7 +237,7 @@ main(){
         update_gki_defconfig
     elif [ $1 == "build_dlkm" ]
     then
-        build_vendor_dlkm
+        use_prebuilt_dlkm
     else
         echo "Incorrect usage. Please run: "
         echo "  bash build.sh help (or -h) "
