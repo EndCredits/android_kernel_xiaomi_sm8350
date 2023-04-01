@@ -6,17 +6,16 @@
 - [Multi-Gen LRU/userfatalfd/mm changes](https://github.com/EndCredits/android_kernel_xiaomi_sm8350/tree/feat-mm)
 - [CLO upstream merge](https://github.com/EndCredits/android_kernel_xiaomi_sm8350/tree/baseline)
 - [Data Access Monitor backport](https://github.com/EndCredits/android_kernel_xiaomi_sm8350/tree/feat-damon)
+- [ZRAM backport](https://github.com/EndCredits/android_kernel_xiaomi_sm8350/tree/feat-zram)
+- [Support standalone install by Anykernel3](https://github.com/EndCredits/android_kernel_xiaomi_sm8350/tree/feat-ak3)
+- [Kernel SU](https://github.com/EndCredits/android_kernel_xiaomi_sm8350/tree/feat-ksu)
 
 ## Feats planning to be added
 
-- Mainline ZRAM backport [WIP]
 - Maple Tree features
-- RCU Power Save
+- Lazy RCU [WIP]
 - devfreq_boost && Kprofile
 - Crypto libs update [WIP]
-- ACK Merge
-- Support standalone install by Anykernel3 [WIP]
-- Kernel SU
 - OnePlus CPU Effiency driver
 - More comming...
 
