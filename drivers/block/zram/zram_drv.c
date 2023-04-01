@@ -1721,6 +1721,7 @@ void zram_set_screen_state(bool on)
 		queue_work(system_power_efficient_wq, &zram_wb_fb_worker);
 	}
 }
+EXPORT_SYMBOL(zram_set_screen_state);
 
 static void __init init_zram_wb(void)
 {
