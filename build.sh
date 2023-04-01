@@ -85,7 +85,7 @@ generate_flashable(){
     echo ' Getting AnyKernel ';
     cp -r ./tools/ak3 $AK3_PATH;
     mkdir -p $TARGET_OUT/./ak3/vendor_ramdisk/lib/modules
-    
+
     cd $TARGET_OUT;
     ANYKERNEL_PATH=./ak3
 
@@ -103,6 +103,8 @@ generate_flashable(){
     zip -q -r $TARGET_KERNEL_NAME-$CURRENT_TIME-$TARGET_KERNEL_MOD_VERSION.zip *;
 
    echo " Target File:  $TARGET_OUT/$ANYKERNEL_PATH/$TARGET_KERNEL_NAME-$CURRENT_TIME-$TARGET_KERNEL_MOD_VERSION.zip ";
+
+   cd $KSOURCE
 }
 
 save_defconfig(){
