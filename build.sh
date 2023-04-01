@@ -247,6 +247,7 @@ main(){
         link_all_dtb_files
         use_prebuilt_dlkm
         generate_flashable
+        git checkout HEAD .
     elif [ $1 == "build_dlkm" ]
     then
         use_prebuilt_dlkm
