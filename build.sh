@@ -188,7 +188,7 @@ use_prebuilt_dlkm(){
 }
 
 ksu_prepare(){
-    echo "obj-y += kernelsu/" >> drivers/Makefile
+    ./scripts/config --file $TARGET_OUT/.config -e CONFIG_KSU
 }
 
 main(){
