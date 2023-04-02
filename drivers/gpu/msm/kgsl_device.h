@@ -277,7 +277,6 @@ struct kgsl_device {
 	bool force_panic;		/* Force panic after snapshot dump */
 	bool skip_ib_capture;		/* Skip IB capture after snapshot */
 	bool prioritize_unrecoverable;	/* Overwrite with new GMU snapshots */
-	bool set_isdb_breakpoint;	/* Set isdb registers before snapshot */
 	bool snapshot_atomic;		/* To capture snapshot in atomic context*/
 	/* Use CP Crash dumper to get GPU snapshot*/
 	bool snapshot_crashdumper;
@@ -286,7 +285,9 @@ struct kgsl_device {
 
 	struct kobject snapshot_kobj;
 #endif
-
+#ifdef CONFIG_DEBUG_FS
+	bool set_isdb_breakpoint;	/* Set isdb registers before snapshot */
+#endif
 	struct kobject ppd_kobj;
 
 	struct kgsl_pwrscale pwrscale;
