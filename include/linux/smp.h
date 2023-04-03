@@ -22,6 +22,17 @@ struct __call_single_data {
 	unsigned int flags;
 };
 
+struct __call_single_node {
+	struct llist_node	llist;
+	union {
+		unsigned int	u_flags;
+		atomic_t	a_flags;
+	};
+#ifdef CONFIG_64BIT
+	u16 src, dst;
+#endif
+};
+
 /* Use __aligned() to avoid to use 2 cache lines for 1 csd */
 typedef struct __call_single_data call_single_data_t
 	__aligned(sizeof(struct __call_single_data));

@@ -148,7 +148,9 @@ static void __notify_execute_cb(struct i915_request *rq)
 	if (list_empty(&rq->execute_cb))
 		return;
 
-	list_for_each_entry(cb, &rq->execute_cb, link)
+	llist_for_each_entry_safe(cb, cn,
+				  llist_del_all(&rq->execute_cb),
+				  work.node.llist)
 		irq_work_queue(&cb->work);
 
 	/*
