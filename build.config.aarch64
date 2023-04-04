@@ -1,5 +1,10 @@
 ARCH=arm64
 
+CROSS_COMPILE=aarch64-linux-gnu-
+CROSS_COMPILE_COMPAT=arm-linux-gnueabi-
+LINUX_GCC_CROSS_COMPILE_PREBUILTS_BIN=prebuilts/clang/host/linux-x86/clang-hana/bin
+LINUX_GCC_CROSS_COMPILE_ARM32_PREBUILTS_BIN=prebuilts/clang/host/linux-x86/clang-hana/bin
+
 FILES="
 arch/arm64/boot/Image.gz
 arch/arm64/boot/Image
