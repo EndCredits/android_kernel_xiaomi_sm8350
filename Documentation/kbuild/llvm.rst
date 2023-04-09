@@ -38,10 +38,10 @@ Cross Compiling
 A single Clang compiler binary will typically contain all supported backends,
 which can help simplify cross compiling. ::
 
-	ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- make CC=clang
+	make ARCH=arm64 CC=clang CROSS_COMPILE=aarch64-linux-gnu-
 
 ``CROSS_COMPILE`` is not used to prefix the Clang compiler binary, instead
-``CROSS_COMPILE`` is used to set a command line flag: ``--target=<triple>``. For
+``CROSS_COMPILE`` is used to set a command line flag: ``--target <triple>``. For
 example: ::
 
 	clang --target=aarch64-linux-gnu foo.c
@@ -49,17 +49,35 @@ example: ::
 LLVM Utilities
 --------------
 
-LLVM has substitutes for GNU binutils utilities. Kbuild supports ``LLVM=1``
-to enable them. ::
+LLVM has substitutes for GNU binutils utilities. They can be enabled individually.
+The full list of supported make variables::
 
-	make LLVM=1
+  make CC=clang LD=ld.lld AR=llvm-ar NM=llvm-nm STRIP=llvm-strip \
+    OBJCOPY=llvm-objcopy OBJDUMP=llvm-objdump READELF=llvm-readelf \
+    HOSTCC=clang HOSTCXX=clang++ HOSTAR=llvm-ar HOSTLD=ld.lld
 
-They can be enabled individually. The full list of the parameters: ::
+To simplify the above command, Kbuild supports the ``LLVM`` variable::
 
-	make CC=clang LD=ld.lld AR=llvm-ar NM=llvm-nm STRIP=llvm-strip \
-	  OBJCOPY=llvm-objcopy OBJDUMP=llvm-objdump OBJSIZE=llvm-size \
-	  READELF=llvm-readelf HOSTCC=clang HOSTCXX=clang++ HOSTAR=llvm-ar \
-	  HOSTLD=ld.lld
+  make LLVM=1
+
+If your LLVM tools are not available in your PATH, you can supply their
+location using the LLVM variable with a trailing slash::
+
+  make LLVM=/path/to/llvm/
+
+which will use ``/path/to/llvm/clang``, ``/path/to/llvm/ld.lld``, etc.
+
+If your LLVM tools have a version suffix and you want to test with that
+explicit version rather than the unsuffixed executables like ``LLVM=1``, you
+can pass the suffix using the ``LLVM`` variable::
+
+  make LLVM=-14
+
+which will use ``clang-14``, ``ld.lld-14``, etc.
+
+``LLVM=0`` is not the same as omitting ``LLVM`` altogether, it will behave like
+``LLVM=1``. If you only wish to use certain LLVM utilities, use their respective
+make variables.
 
 The integrated assembler is enabled by default. You can pass ``LLVM_IAS=0`` to
 disable it.
@@ -76,12 +94,12 @@ That means if you use only LLVM tools, ``CROSS_COMPILE`` becomes unnecessary.
 
 For example, to cross-compile the arm64 kernel::
 
-	make ARCH=arm64 LLVM=1
+  make ARCH=arm64 LLVM=1
 
 If ``LLVM_IAS=0`` is specified, ``CROSS_COMPILE`` is also used to derive
 ``--prefix=<path>`` to search for the GNU assembler and linker. ::
 
-	make ARCH=arm64 LLVM=1 LLVM_IAS=0 CROSS_COMPILE=aarch64-linux-gnu-
+  make ARCH=arm64 LLVM=1 LLVM_IAS=0 CROSS_COMPILE=aarch64-linux-gnu-
 
 Supported Architectures
 -----------------------
