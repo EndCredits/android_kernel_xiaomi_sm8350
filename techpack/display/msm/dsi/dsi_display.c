@@ -5732,7 +5732,7 @@ static DEVICE_ATTR_RO(dynamic_fps);
 
 static struct attribute *mi_display_attrs[] = {
 	&dev_attr_dynamic_fps.attr,
-}
+};
 
 #ifdef CONFIG_DRM_SDE_EXPO
 static ssize_t sysfs_dimlayer_exposure_read(struct device *dev,
