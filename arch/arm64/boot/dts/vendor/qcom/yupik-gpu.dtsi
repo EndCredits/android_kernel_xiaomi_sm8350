@@ -52,7 +52,6 @@
 
 		qcom,chipid = <0x06030500>;
 		qcom,gpu-model = "Adreno642Lv1";
-		qcom,no-nap;
 
 		qcom,min-access-length = <32>;
 		qcom,ubwc-mode = <3>;
