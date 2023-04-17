@@ -1462,6 +1462,7 @@ static void fts_resume_work(struct work_struct *work)
 	fts_ts_resume(ts_data->dev);
 }
 
+#define CHANGE_FPS	  0xF628
 /*return 1 means notify was handled by this function*/
 static int check_fps(unsigned long event, void *data)
 {
@@ -1470,7 +1471,7 @@ static int check_fps(unsigned long event, void *data)
 	u8 cmd = 0;
 	bool suspend = fts_data->suspended;
 
-	if (MI_DISP_FPS_CHANGE_EVENT == event) {
+	if (CHANGE_FPS == event) {
 		switch (fps) {
 		case 30:
 			cmd = 0x1e;
