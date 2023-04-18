@@ -21,6 +21,7 @@ THREAD=$(nproc --all);
 CC_ADDITIONAL_FLAGS="LLVM_IAS=1 LLVM=1";
 TARGET_OUT="../out";
 TARGET_DEVICE=renoir
+TARGET_DEVICE_DEFCONFIG_NAME=renoir_defconfig
 
 export TARGET_PRODUCT=$TARGET_DEVICE
 
@@ -117,7 +118,7 @@ save_defconfig(){
     COST_SEC=$[ $END_SEC-$START_SEC ];
     echo "Finished. Kernel config saved to $TARGET_OUT/defconfig"
     echo "Moving kernel defconfig to source tree"
-    mv $TARGET_OUT/defconfig $DEFCONFIG_PATH/$DEFCONFIG_NAME
+    mv $TARGET_OUT/defconfig $DEFCONFIG_PATH/$TARGET_DEVICE_DEFCONFIG_NAME
     echo "Kernel Config Build Costed $(($COST_SEC/60))min $(($COST_SEC%60))s"
 
 }
@@ -204,15 +205,15 @@ main(){
         echo "    cleanbuild      Clean the source tree and build files then perform a all build."
         echo
         echo "    flashable       Only generate the flashable zip file. Don't use it before you have built once."
-#         echo "    savedefconfig   Save the defconfig file to source tree."
+        echo "    savedefconfig   Save the defconfig file to source tree."
         echo "    kernelonly      Only build kernel image"
         echo "    defconfig       Only build kernel defconfig"
         echo "    upgkidefconf    Update GKI defconfig for lahaina"
         echo "    help ( -h )     Print help information."
         echo
-#    elif [ $1 == "savedefconfig" ]
-#    then
-#        save_defconfig;
+    elif [ $1 == "savedefconfig" ]
+    then
+        save_defconfig;
     elif [ $1 == "cleanbuild" ]
     then
         clean;
