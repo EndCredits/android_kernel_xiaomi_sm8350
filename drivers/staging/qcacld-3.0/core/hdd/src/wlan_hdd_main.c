@@ -16884,6 +16884,7 @@ const struct file_operations wlan_hdd_state_fops = {
 	.release = wlan_hdd_state_ctrl_param_release,
 };
 
+#ifndef FEATURE_WLAN_RESIDENT_DRIVER
 static int  wlan_hdd_state_ctrl_param_create(void)
 {
 	unsigned int wlan_hdd_state_major = 0;
@@ -16938,6 +16939,7 @@ class_err:
 dev_alloc_err:
 	return -ENODEV;
 }
+#endif
 
 static void wlan_hdd_state_ctrl_param_destroy(void)
 {
