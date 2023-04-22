@@ -616,6 +616,7 @@ static unsigned long damos_madvise(struct damon_target *target,
 		struct damon_region *r, int behavior)
 {
 	struct mm_struct *mm;
+	struct task_struct *target_task;
 	unsigned long start = PAGE_ALIGN(r->ar.start);
 	unsigned long len = PAGE_ALIGN(damon_sz_region(r));
 	unsigned long applied;
@@ -623,8 +624,9 @@ static unsigned long damos_madvise(struct damon_target *target,
 	mm = damon_get_mm(target);
 	if (!mm)
 		return 0;
+	target_task =  mm->owner;
 
-	applied = do_madvise(current, mm, start, len, behavior) ? 0 : len;
+	applied = do_madvise(target_task, mm, start, len, behavior) ? 0 : len;
 	mmput(mm);
 
 	return applied;
