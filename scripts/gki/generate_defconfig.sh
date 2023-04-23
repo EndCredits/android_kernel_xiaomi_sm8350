@@ -45,6 +45,7 @@ KERN_MAKE_ARGS="ARCH=$ARCH \
 
 # Allyes fragment temporarily created on GKI config fragment
 QCOM_GKI_ALLYES_FRAG=${CONFIGS_DIR}/${PLATFORM_NAME}_ALLYES_GKI.config
+XIAOMI_GKI_ALLYES_FRAG=${CONFIGS_DIR}/xiaomi_ALLYES_GKI.config
 
 if [[ "${REQUIRED_DEFCONFIG}" == *"gki"* ]]; then
 if [ ! -f "${QCOM_GKI_FRAG}" ]; then
@@ -66,11 +67,15 @@ case "$REQUIRED_DEFCONFIG" in
 		# DEBUG_FS fragment.
 		FINAL_DEFCONFIG_BLEND+=" $QCOM_DEBUG_FS_FRAG"
 
+		FINAL_DEFCONFIG_BLEND+=" $XIAOMI_QGKI_FRAG"
 		FINAL_DEFCONFIG_BLEND+=" $QCOM_QGKI_FRAG"
+		${SCRIPTS_ROOT}/fragment_allyesconfig.sh $XIAOMI_GKI_FRAG $XIAOMI_GKI_ALLYES_FRAG
 		${SCRIPTS_ROOT}/fragment_allyesconfig.sh $QCOM_GKI_FRAG $QCOM_GKI_ALLYES_FRAG
+		FINAL_DEFCONFIG_BLEND+=" $XIAOMI_GKI_ALLYES_FRAG "
 		FINAL_DEFCONFIG_BLEND+=" $QCOM_GKI_ALLYES_FRAG "
 		;;
 	${PLATFORM_NAME}-gki_defconfig )
+		FINAL_DEFCONFIG_BLEND+=" $XIAOMI_GKI_FRAG "
 		FINAL_DEFCONFIG_BLEND+=" $QCOM_GKI_FRAG "
 		;;
 	${PLATFORM_NAME}-debug_defconfig )
@@ -97,3 +102,4 @@ mv defconfig $CONFIGS_DIR/$REQUIRED_DEFCONFIG
 
 # Cleanup the allyes config fragment and other generated files
 rm -rf $QCOM_GKI_ALLYES_FRAG .config include/config/ include/generated/ arch/$ARCH/include/generated/
+rm -rf $XIAOMI_GKI_ALLYES_FRAG .config include/config/ include/generated/ arch/$ARCH/include/generated/
