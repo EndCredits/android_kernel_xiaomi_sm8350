@@ -266,13 +266,8 @@ static __always_inline ssize_t __mcopy_atomic_hugetlb(struct mm_struct *dst_mm,
 	 * by THP.  Since we can not reliably insert a zero page, this
 	 * feature is not supported.
 	 */
-<<<<<<< HEAD
 	if (mode == MCOPY_ATOMIC_ZEROPAGE) {
-		up_read(&dst_mm->mmap_sem);
-=======
-	if (zeropage) {
 		mmap_read_unlock(dst_mm);
->>>>>>> 9d26bae471523 (mmap locking API: use coccinelle to convert mmap_sem rwsem call sites)
 		return -EINVAL;
 	}
 
