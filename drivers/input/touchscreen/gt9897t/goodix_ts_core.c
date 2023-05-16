@@ -2048,14 +2048,14 @@ int goodix_drm_state_chg_callback(struct notifier_block *self,
 
 	if (fb_event && fb_event->data && core_data) {
 		blank = *(int *)(fb_event->data);
-		ts_info("notifier tp event:%d, code:%d.", event, blank);
+		// ts_info("notifier tp event:%d, code:%d.", event, blank);
 		flush_workqueue(core_data->event_wq);
 		if (event == MI_DISP_DPMS_EARLY_EVENT && (blank == MI_DISP_DPMS_POWERDOWN ||
 			blank == MI_DISP_DPMS_LP1 || blank == MI_DISP_DPMS_LP2)) {
-			ts_info("touchpanel suspend by %s", blank == MI_DISP_DPMS_POWERDOWN ? "blank" : "doze");
+			// ts_info("touchpanel suspend by %s", blank == MI_DISP_DPMS_POWERDOWN ? "blank" : "doze");
 			queue_work(core_data->event_wq, &core_data->suspend_work);
 		} else if (event == MI_DISP_DPMS_EVENT && blank == MI_DISP_DPMS_ON) {
-			ts_info("touchpanel resume");
+			// ts_info("touchpanel resume");
 			queue_work(core_data->event_wq, &core_data->resume_work);
 		}
 	}
