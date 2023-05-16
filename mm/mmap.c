@@ -871,30 +871,6 @@ int __vma_adjust(struct vm_area_struct *vma, unsigned long start,
 	validate_mm(mm);
 	validate_mm_mt(mm);
 
-	/*
-	 * Why using vm_raw_write*() functions here to avoid lockdep's warning ?
-	 *
-	 * Locked is complaining about a theoretical lock dependency, involving
-	 * 3 locks:
-	 *   mapping->i_mmap_rwsem --> vma->vm_sequence --> fs_reclaim
-	 *
-	 * Here are the major path leading to this dependency :
-	 *  1. __vma_adjust() mmap_sem  -> vm_sequence -> i_mmap_rwsem
-	 *  2. move_vmap() mmap_sem -> vm_sequence -> fs_reclaim
-	 *  3. __alloc_pages_nodemask() fs_reclaim -> i_mmap_rwsem
-	 *  4. unmap_mapping_range() i_mmap_rwsem -> vm_sequence
-	 *
-	 * So there is no way to solve this easily, especially because in
-	 * unmap_mapping_range() the i_mmap_rwsem is grab while the impacted
-	 * VMAs are not yet known.
-	 * However, the way the vm_seq is used is guarantying that we will
-	 * never block on it since we just check for its value and never wait
-	 * for it to move, see vma_has_changed() and handle_speculative_fault().
-	 */
-	vm_raw_write_begin(vma);
-	if (next)
-		vm_raw_write_begin(next);
-
 	if (next && !insert) {
 		if (end >= next->vm_end) {
 			/*
@@ -1124,7 +1100,6 @@ again:
 			anon_vma_merge(vma, next);
 		mm->map_count--;
 		mpol_put(vma_policy(next));
-		vm_raw_write_end(next);
 		vm_area_free(next);
 		/*
 		 * In mprotect's case 6 (see comments on vma_merge),
@@ -1183,10 +1158,6 @@ again:
 	}
 	if (insert && file)
 		uprobe_mmap(insert);
-
-	if (next && next != vma)
-		vm_raw_write_end(next);
-	vm_raw_write_end(vma);
 
 	validate_mm(mm);
 	validate_mm_mt(mm);
