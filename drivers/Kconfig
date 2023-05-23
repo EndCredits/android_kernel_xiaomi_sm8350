@@ -234,4 +234,6 @@ source "drivers/counter/Kconfig"
 
 source "drivers/uwb-sr100/Kconfig"
 
+source "drivers/cpufreq_bouncing/Kconfig"
+
 endmenu
