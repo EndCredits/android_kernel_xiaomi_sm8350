@@ -3,7 +3,7 @@
 ## Current kernel features:
 
 - [EROFS backport](https://github.com/EndCredits/android_kernel_xiaomi_sm8350/tree/feat-erofs)
-- [Multi-Gen LRU/userfatalfd/mm changes](https://github.com/EndCredits/android_kernel_xiaomi_sm8350/tree/feat-mm)
+- [Multi-Gen LRU/userfaultfd/mm changes](https://github.com/EndCredits/android_kernel_xiaomi_sm8350/tree/feat-mm)
 - [CLO upstream merge](https://github.com/EndCredits/android_kernel_xiaomi_sm8350/tree/baseline)
 - [Data Access Monitor backport](https://github.com/EndCredits/android_kernel_xiaomi_sm8350/tree/feat-damon)
 - [ZRAM backport](https://github.com/EndCredits/android_kernel_xiaomi_sm8350/tree/feat-zram)
