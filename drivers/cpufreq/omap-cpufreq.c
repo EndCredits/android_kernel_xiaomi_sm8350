@@ -111,7 +111,6 @@ static inline void freq_table_free(void)
 static int omap_cpu_init(struct cpufreq_policy *policy)
 {
 	int result;
-
 	policy->clk = clk_get(NULL, "cpufreq_ck");
 	if (IS_ERR(policy->clk))
 		return PTR_ERR(policy->clk);
@@ -131,7 +130,10 @@ static int omap_cpu_init(struct cpufreq_policy *policy)
 
 	/* FIXME: what's the actual transition time? */
 	cpufreq_generic_init(policy, freq_table, 300 * 1000);
-	dev_pm_opp_of_register_em(policy->cpus);
+	result = dev_pm_opp_of_register_em(policy->cpus);
+	if (result){
+		dev_err(cpu_dev, "failed to register opp energy model: %d\n", result);
+	}
 
 	return 0;
 }
