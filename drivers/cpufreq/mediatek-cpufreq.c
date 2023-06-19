@@ -448,7 +448,10 @@ static int mtk_cpufreq_init(struct cpufreq_policy *policy)
 	policy->driver_data = info;
 	policy->clk = info->cpu_clk;
 
-	dev_pm_opp_of_register_em(policy->cpus);
+	ret = dev_pm_opp_of_register_em(policy->cpus);
+	if (ret){
+		dev_err(cpu_dev, "failed to register opp energy model: %d\n", ret);
+	}
 
 	return 0;
 }
