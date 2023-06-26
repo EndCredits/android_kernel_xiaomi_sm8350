@@ -303,6 +303,7 @@
 	mi,fp-display-on-optimize-flag;
 	mi,max-brightness-clone = <2047>;
 	mi,step-hbm-flag;
+	mi,panel-hbm-backlight-threshold = <2047>;
 
 	/* IRQF_ONESHOT | IRQF_TRIGGER_FALLING */
 	mi,esd-err-irq-gpio = <&tlmm 80 0x2002>;
