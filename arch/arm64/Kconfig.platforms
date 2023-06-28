@@ -400,4 +400,76 @@ config ARCH_SA2150P
 	  If you do not wish to build a kernel that runs on this chipset,
 	  say 'N' here.
 
+menu "Kernel support for xiaomi devices"
+config BOARD_XIAOMI
+	bool "Xiaomi Device"
+	help
+		Enable this config to indicate that this is a xiaomi device
+
+if BOARD_XIAOMI
+config BOARD_XIAOMI_LAHAINA
+	bool "Xiaomi lahaina device"
+	select ARCH_QCOM
+	select ARCH_LAHAINA
+	help
+		Enable this config to indicate that this is a xiaomi lahaina device
+
+config BOARD_XIAOMI_SHIMA
+	bool "Xiaomi shima device"
+	select ARCH_QCOM
+	select ARCH_SHIMA
+	help
+		Enable this config to indicate that this is a xiaomi shima device
+
+config BOARD_XIAOMI_YUPIK
+	bool "Xiaomi yupik device"
+	select ARCH_QCOM
+	select ARCH_YUPIK
+	help
+		Enable this config to indicate that this is a xiaomi yupik device
+
+config BOARD_XIAOMI_CETUS
+	bool "Mi MIX FOLD"
+	select BOARD_XIAOMI_LAHAINA
+	help
+		Enable this config to support Mi MIX FOLD device
+
+config BOARD_XIAOMI_HAYDN
+	bool "Redmi K40 Pro / Redmi K40 Pro + / Redmi POCO F3"
+	select BOARD_XIAOMI_LAHAINA
+	help
+		Enable this config to support Redmi K40 Pro / Redmi K40 Pro + / Redmi POCO F3
+
+config BOARD_XIAOMI_LISA
+	bool "Mi 11 Lite 5G NE"
+	select BOARD_XIAOMI_YUPIK
+	help
+		Enable this config to support Mi 11 Lite 5G NE
+
+config BOARD_XIAOMI_ODIN
+	bool "Xiaomi Mix 4"
+	select BOARD_XIAOMI_LAHAINA
+	help
+		Enable this config to support Xiaomi Mix 4
+
+config BOARD_XIAOMI_RENOIR
+	bool "Mi 11 Lite 5G"
+	select BOARD_XIAOMI_SHIMA
+	help
+		Enable this config to support Mi 11 Lite 5G
+
+config BOARD_XIAOMI_STAR
+	bool "Mi 11 Pro / Mi 11 Ultra"
+	select BOARD_XIAOMI_LAHAINA
+	help
+		Enable this config to support Mi 11 Pro / Mi 11 Ultra
+
+config BOARD_XIAOMI_VENUS
+	bool "Mi 11"
+	select BOARD_XIAOMI_LAHAINA
+	help
+		Enable this config to support Mi 11
+endif
+endmenu
+
 endmenu
