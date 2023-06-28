@@ -276,15 +276,26 @@ ifeq ($(KERNEL_BUILD), 1)
 	obj-y	+= rouleur/
 endif
 
-ifneq (,$(filter $(TARGET_PRODUCT), venus star haydn odin vili))
+# From: https://stackoverflow.com/questions/5584872/complex-conditions-check-in-makefile
+ifdef_any_of = $(filter-out undefined,$(foreach v,$(1),$(origin $(v))))
+
+ifneq ($(call ifdef_any_of,CONFIG_BOARD_XIAOMI_VENUS CONFIG_BOARD_XIAOMI_STAR CONFIG_BOARD_XIAOMI_HAYDN CONFIG_BOARD_XIAOMI_ODIN),)
 	obj-y	+= cs35l41/
 endif
 
-ifneq (,$(filter $(TARGET_PRODUCT), cetus argo))
+ifneq (,$(filter $(TARGET_PRODUCT), vili))
+	obj-y	+= cs35l41/
+endif
+
+ifdef CONFIG_BOARD_XIAOMI_CETUS
 	obj-y	+= cs35l45/
 endif
 
-ifneq (,$(filter $(TARGET_PRODUCT), renoir lisa))
+ifneq (,$(filter $(TARGET_PRODUCT), argo))
+	obj-y	+= cs35l45/
+endif
+
+ifneq ($(call ifdef_any_of,CONFIG_BOARD_XIAOMI_RENOIR CONFIG_BOARD_XIAOMI_LISA),)
 	obj-y	+= tfa98xx/
 endif
 
