@@ -321,6 +321,7 @@ gen_headers_out_arm64 = [
     "linux/ipx.h",
     "linux/irqnr.h",
     "linux/iso_fs.h",
+    "linux/ispv2_ioparam.h",
     "linux/isst_if.h",
     "linux/ivtv.h",
     "linux/ivtvfb.h",
