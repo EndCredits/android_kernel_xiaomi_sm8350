@@ -438,7 +438,7 @@ config BOARD_XIAOMI_HAYDN
 	bool "Redmi K40 Pro / Redmi K40 Pro + / Redmi POCO F3"
 	select BOARD_XIAOMI_LAHAINA
 	help
-		Enable this config to support Redmi K40 Pro / Redmi K40 Pro + / Redmi POCO F3
+		Enable this config to support Redmi K40 Pro / Pro+ && Mi 11X Pro / Mi 11i
 
 config BOARD_XIAOMI_LISA
 	bool "Mi 11 Lite 5G NE"
