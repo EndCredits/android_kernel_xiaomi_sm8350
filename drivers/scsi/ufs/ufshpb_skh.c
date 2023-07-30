@@ -94,9 +94,6 @@ static void skhpb_hit_lru_info(struct skhpb_victim_select_info *lru_info,
 static int create_skh_hpbfn_enable_proc(void);
 static void remove_skh_hpbfn_enable_proc(void);
 
-#if defined(CONFIG_UFSFEATURE) && defined(CONFIG_UFSHPB)
-extern int ufsplus_hpb_status;
-#endif
 static inline void skhpb_get_bit_offset(
 		struct skhpb_lu *hpb, int subregion_offset,
 		int *dword, int *offset)
@@ -2027,11 +2024,6 @@ static int skhpb_lu_hpb_init(struct ufs_hba *hba, struct skhpb_lu *hpb,
 	INIT_LIST_HEAD(&hpb->lh_map_ctx);
 
 	hpb->lu_hpb_enable = true;
-#if defined(CONFIG_UFSFEATURE) && defined(CONFIG_UFSHPB)
-	ufsplus_hpb_status=1;
-	SKHPB_DRIVER_I("ufsplus_hpb_status = %d\n",
-			ufsplus_hpb_status);
-#endif
 	skhpb_init_lu_constant(hpb, lu_desc, func_desc);
 
 	hpb->region_tbl = vzalloc(sizeof(struct skhpb_region) *	hpb->regions_per_lu);

@@ -670,7 +670,6 @@ err_out:
 	return ret;
 }
 
-extern int ufsplus_tw_status;
 void ufstw_init(struct ufsf_feature *ufsf)
 {
 	int lun, ret = 0;
@@ -708,10 +707,6 @@ void ufstw_init(struct ufsf_feature *ufsf)
 			ERR_MSG("lu count mismatched");
 			goto out_free_mem;
 		}
-	}
-
-	if (tw_enabled_lun) {
-		ufsplus_tw_status = 1;
 	}
 
 	if (tw_enabled_lun == 0) {

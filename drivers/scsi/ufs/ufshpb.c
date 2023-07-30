@@ -3800,7 +3800,6 @@ static void ufshpb_error_handler(struct work_struct *work)
 	ufshpb_remove(ufsf, HPB_FAILED);
 }
 
-extern int ufsplus_hpb_status;
 static int ufshpb_init(struct ufsf_feature *ufsf)
 {
 	int lun, ret;
@@ -3827,9 +3826,6 @@ static int ufshpb_init(struct ufsf_feature *ufsf)
 		}
 		hpb_enabled_lun++;
 	}
-
-	if(hpb_enabled_lun)
-		ufsplus_hpb_status = 1;
 
 	if (hpb_enabled_lun == 0) {
 		ERR_MSG("No UFSHPB LU to init");
