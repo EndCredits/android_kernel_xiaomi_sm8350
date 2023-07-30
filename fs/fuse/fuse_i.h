@@ -111,7 +111,7 @@ struct fuse_inode {
 			wait_queue_head_t page_waitq;
 
 			/* List of writepage requestst (pending or sent) */
-			struct rb_root writepages;
+			struct list_head writepages;
 		};
 
 		/* readdir cache (directory only) */
