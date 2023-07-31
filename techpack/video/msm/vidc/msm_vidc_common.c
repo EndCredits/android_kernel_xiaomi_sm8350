@@ -2523,7 +2523,9 @@ static void handle_ebd(enum hal_command_response cmd, void *data)
 	 */
 	msm_comm_put_vidc_buffer(inst, mbuf);
 	msm_comm_vb2_buffer_done(inst, mbuf);
+#ifdef CONFIG_DEBUG_FS
 	msm_vidc_debugfs_update(inst, MSM_VIDC_DEBUGFS_EVENT_EBD);
+#endif
 	kref_put_mbuf(mbuf);
 exit:
 	s_vpr_l(inst->sid, "handled: SESSION_ETB_DONE\n");
@@ -2720,7 +2722,9 @@ static void handle_fbd(enum hal_command_response cmd, void *data)
 	 */
 	msm_comm_put_vidc_buffer(inst, mbuf);
 	msm_comm_vb2_buffer_done(inst, mbuf);
+#ifdef CONFIG_DEBUG_FS
 	msm_vidc_debugfs_update(inst, MSM_VIDC_DEBUGFS_EVENT_FBD);
+#endif
 	kref_put_mbuf(mbuf);
 
 exit:
@@ -4497,7 +4501,9 @@ static int msm_comm_qbuf_to_hfi(struct msm_vidc_inst *inst,
 {
 	int rc = 0;
 	struct hfi_device *hdev;
+#ifdef CONFIG_DEBUG_FS
 	enum msm_vidc_debugfs_event e;
+#endif
 	struct vidc_frame_data frame_data = {0};
 
 	if (!inst || !inst->core || !inst->core->device || !mbuf) {
@@ -4511,10 +4517,14 @@ static int msm_comm_qbuf_to_hfi(struct msm_vidc_inst *inst,
 	mbuf->flags &= ~MSM_VIDC_FLAG_DEFERRED;
 
 	if (mbuf->vvb.vb2_buf.type == INPUT_MPLANE) {
+#ifdef CONFIG_DEBUG_FS
 		e = MSM_VIDC_DEBUGFS_EVENT_ETB;
+#endif
 		rc = call_hfi_op(hdev, session_etb, inst->session, &frame_data);
 	} else if (mbuf->vvb.vb2_buf.type == OUTPUT_MPLANE) {
+#ifdef CONFIG_DEBUG_FS
 		e = MSM_VIDC_DEBUGFS_EVENT_FTB;
+#endif
 		rc = call_hfi_op(hdev, session_ftb, inst->session, &frame_data);
 	} else {
 		s_vpr_e(inst->sid, "%s: invalid qbuf type %d:\n", __func__,
@@ -4527,8 +4537,9 @@ static int msm_comm_qbuf_to_hfi(struct msm_vidc_inst *inst,
 		goto err_bad_input;
 	}
 	mbuf->flags |= MSM_VIDC_FLAG_QUEUED;
+#ifdef CONFIG_DEBUG_FS
 	msm_vidc_debugfs_update(inst, e);
-
+#endif
 	if (mbuf->vvb.vb2_buf.type == INPUT_MPLANE &&
 			is_decode_session(inst))
 		rc = msm_comm_check_window_bitrate(inst, &frame_data);
@@ -4685,8 +4696,9 @@ static int msm_comm_qbuf_superframe_to_hfi(struct msm_vidc_inst *inst,
 	/* update mbuf flags */
 	mbuf->flags |= MSM_VIDC_FLAG_QUEUED;
 	mbuf->flags &= ~MSM_VIDC_FLAG_DEFERRED;
+#ifdef CONFIG_DEBUG_FS
 	msm_vidc_debugfs_update(inst, MSM_VIDC_DEBUGFS_EVENT_ETB);
-
+#endif
 	return 0;
 }
 

@@ -205,6 +205,7 @@ static const struct file_operations debug_level_fops = {
 	.read = debug_level_read,
 };
 
+#ifdef CONFIG_DEBUG_FS
 struct dentry *msm_vidc_debugfs_init_drv(void)
 {
 	bool ok = false;
@@ -294,6 +295,7 @@ struct dentry *msm_vidc_debugfs_init_core(struct msm_vidc_core *core,
 failed_create_dir:
 	return dir;
 }
+#endif
 
 static int inst_info_open(struct inode *inode, struct file *file)
 {
@@ -470,6 +472,7 @@ static const struct file_operations inst_info_fops = {
 	.release = inst_info_release,
 };
 
+#ifdef CONFIG_DEBUG_FS
 struct dentry *msm_vidc_debugfs_init_inst(struct msm_vidc_inst *inst,
 		struct dentry *parent)
 {
@@ -595,6 +598,7 @@ void msm_vidc_debugfs_update(struct msm_vidc_inst *inst,
 		break;
 	}
 }
+#endif
 
 int msm_vidc_check_ratelimit(void)
 {
