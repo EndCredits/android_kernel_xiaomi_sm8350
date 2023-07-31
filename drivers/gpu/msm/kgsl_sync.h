@@ -70,6 +70,7 @@ struct kgsl_sync_fence_cb {
 
 struct kgsl_device_private;
 struct kgsl_drawobj_sync_event;
+struct event_fence_info;
 struct kgsl_process_private;
 struct kgsl_syncsource;
 
@@ -85,7 +86,8 @@ void kgsl_sync_timeline_detach(struct kgsl_sync_timeline *ktimeline);
 void kgsl_sync_timeline_put(struct kgsl_sync_timeline *ktimeline);
 
 struct kgsl_sync_fence_cb *kgsl_sync_fence_async_wait(int fd,
-					bool (*func)(void *priv), void *priv);
+					bool (*func)(void *priv), void *priv,
+					struct event_fence_info *info_ptr);
 
 void kgsl_sync_fence_async_cancel(struct kgsl_sync_fence_cb *kcb);
 
@@ -127,7 +129,8 @@ static inline void kgsl_sync_timeline_put(struct kgsl_sync_timeline *ktimeline)
 
 
 static inline struct kgsl_sync_fence_cb *kgsl_sync_fence_async_wait(int fd,
-					bool (*func)(void *priv), void *priv)
+					bool (*func)(void *priv), void *priv,
+					struct event_fence_info *info_ptr)
 {
 	return NULL;
 }
