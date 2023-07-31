@@ -227,8 +227,10 @@ void *msm_cvp_open(int core_id, int session_type)
 		goto fail_init;
 	}
 
+#ifdef CONFIG_DEBUG_FS
 	inst->debugfs_root =
 		msm_cvp_debugfs_init_inst(inst, core->debugfs_root);
+#endif
 
 	return inst;
 fail_init:
@@ -362,7 +364,9 @@ int msm_cvp_destroy(struct msm_cvp_inst *inst)
 	mutex_destroy(&inst->sync_lock);
 	mutex_destroy(&inst->lock);
 
+#ifdef CONFIG_DEBUG_FS
 	msm_cvp_debugfs_deinit_inst(inst);
+#endif
 
 	__deinit_session_queue(inst);
 	__deinit_fence_queue(inst);
