@@ -2458,13 +2458,13 @@
 
 	cpu0_cpu_l3_tbl: qcom,cpu0-cpu-l3-tbl {
 		qcom,core-dev-table =
-			<  300000  300000000 >,
-			<  691200  556800000 >,
-			<  940800  652800000 >,
-			< 1171200  844800000 >,
-			< 1516800 1056000000 >,
-			< 1670400 1305600000 >,
-			< 1804800 1420800000 >;
+			<  300000 300000000 >,
+			<  691200 556800000 >,
+			<  940800 652800000 >,
+			< 1171200 844800000 >,
+			< 1516800 844800000 >,
+			< 1670400 844800000 >,
+			< 1804800 844800000 >;
 	};
 
 	cpu4_cpu_l3_tbl: qcom,cpu4-cpu-l3-tbl {
@@ -2578,7 +2578,7 @@
 			qcom,core-dev-table =
 				< 1171200 MHZ_TO_MBPS( 300, 16) >,
 				< 1516800 MHZ_TO_MBPS( 466, 16) >,
-				< 1804800 MHZ_TO_MBPS( 600, 16) >;
+				< 1804800 MHZ_TO_MBPS( 466, 16) >;
 		};
 
 		cpu0_llcc_ddr_latmon: qcom,cpu0-llcc-ddr-latmon {
@@ -2589,10 +2589,10 @@
 			ddr4-map {
 				qcom,ddr-type = <DDR_TYPE_LPDDR4X>;
 				qcom,core-dev-table =
-					<  940800 MHZ_TO_MBPS(  451, 4) >,
-					< 1171200 MHZ_TO_MBPS(  547, 4) >,
-					< 1516800 MHZ_TO_MBPS(  768, 4) >,
-					< 1804800 MHZ_TO_MBPS( 1017, 4) >;
+					<  940800 MHZ_TO_MBPS( 451, 4) >,
+					< 1171200 MHZ_TO_MBPS( 547, 4) >,
+					< 1516800 MHZ_TO_MBPS( 768, 4) >,
+					< 1804800 MHZ_TO_MBPS( 768, 4) >;
 			};
 
 			ddr5-map {
@@ -2613,7 +2613,7 @@
 					<  691000 MHZ_TO_MBPS( 200, 4) >,
 					< 1171200 MHZ_TO_MBPS( 451, 4) >,
 					< 1516800 MHZ_TO_MBPS( 547, 4) >,
-					< 1804800 MHZ_TO_MBPS( 768, 4) >;
+					< 1804800 MHZ_TO_MBPS( 547, 4) >;
 		};
 
 		cpu4_cpu_llcc_latmon: qcom,cpu4-cpu-llcc-latmon {
