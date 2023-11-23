@@ -755,6 +755,11 @@ static void update_min_vruntime(struct cfs_rq *cfs_rq)
 #endif
 }
 
+static inline bool __entity_less(struct rb_node *a, const struct rb_node *b)
+{
+	return entity_before(__node_2_se(a), __node_2_se(b));
+}
+
 #define deadline_gt(field, lse, rse) ({ (s64)((lse)->field - (rse)->field) > 0; })
 
 static inline void __update_min_deadline(struct sched_entity *se, struct rb_node *node)
