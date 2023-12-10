@@ -163,7 +163,7 @@ static const struct file_operations ssr_fops = {
 	.write = trigger_ssr_write,
 };
 
-static int cvp_power_get(void *data, u64 *val)
+static __maybe_unused int cvp_power_get(void *data, u64 *val)
 {
 	struct cvp_hfi_device *hfi_ops;
 	struct msm_cvp_core *core;
@@ -187,7 +187,7 @@ static int cvp_power_get(void *data, u64 *val)
 #define MIN_PC_INTERVAL 1000
 #define MAX_PC_INTERVAL 1000000
 
-static int cvp_power_set(void *data, u64 val)
+static __maybe_unused int cvp_power_set(void *data, u64 val)
 {
 	struct cvp_hfi_device *hfi_ops;
 	struct msm_cvp_core *core;
@@ -281,7 +281,7 @@ failed_create_dir:
 }
 #endif
 
-static int _clk_rate_set(void *data, u64 val)
+static __maybe_unused int _clk_rate_set(void *data, u64 val)
 {
 	struct msm_cvp_core *core;
 	struct cvp_hfi_device *dev;
@@ -319,7 +319,7 @@ static int _clk_rate_set(void *data, u64 val)
 	return 0;
 }
 
-static int _clk_rate_get(void *data, u64 *val)
+static __maybe_unused int _clk_rate_get(void *data, u64 *val)
 {
 	struct msm_cvp_core *core;
 	struct iris_hfi_device *hdev;
