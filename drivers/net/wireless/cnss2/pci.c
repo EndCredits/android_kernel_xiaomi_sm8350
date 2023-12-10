@@ -1624,7 +1624,7 @@ static int cnss_pci_handle_mhi_poweron_timeout(struct cnss_pci_data *pci_priv)
 	return 0;
 }
 
-static char *cnss_mhi_state_to_str(enum cnss_mhi_state mhi_state)
+static __maybe_unused char *cnss_mhi_state_to_str(enum cnss_mhi_state mhi_state)
 {
 	switch (mhi_state) {
 	case CNSS_MHI_INIT:

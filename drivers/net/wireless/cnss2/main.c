@@ -1262,7 +1262,7 @@ void *cnss_get_virt_ramdump_mem(struct device *dev, unsigned long *size)
 }
 EXPORT_SYMBOL(cnss_get_virt_ramdump_mem);
 
-static const char *cnss_recovery_reason_to_str(enum cnss_recovery_reason reason)
+static __maybe_unused const char *cnss_recovery_reason_to_str(enum cnss_recovery_reason reason)
 {
 	switch (reason) {
 	case CNSS_REASON_DEFAULT:
