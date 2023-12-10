@@ -412,7 +412,7 @@ static DEVICE_ATTR(clk_enable, S_IWUSR, NULL, clk_enable_set);
 static int select_pin_ctl(struct fpc1020_data *fpc1020, const char *name)
 {
 	size_t i;
-	int rc;
+	int rc = 0;
 	struct device *dev = fpc1020->dev;
 	dev_dbg(dev, "fpc %s --->: enter! \n", __func__);
 
@@ -444,7 +444,7 @@ static ssize_t pinctl_set(struct device *dev,
 			  size_t count)
 {
 	struct fpc1020_data *fpc1020 = dev_get_drvdata(dev);
-	int rc;
+	int rc = 0;
 
 	mutex_lock(&fpc1020->lock);
 	rc = select_pin_ctl(fpc1020, buf);
@@ -462,7 +462,7 @@ static ssize_t regulator_enable_set(struct device *dev,
 	struct fpc1020_data *fpc1020 = dev_get_drvdata(dev);
 	char op;
 	char name[16];
-	int rc;
+	int rc = 0;
 	bool enable;
 
 	if (NUM_PARAMS_REG_ENABLE_SET != sscanf(buf, "%15[^,],%c", name, &op))
@@ -486,7 +486,7 @@ static DEVICE_ATTR(regulator_enable, S_IWUSR, NULL, regulator_enable_set);
 static int hw_reset(struct fpc1020_data *fpc1020)
 {
 	int irq_gpio;
-	int rc;
+	int rc = 0;
 	struct device *dev = fpc1020->dev;
 
 	dev_dbg(dev, "fpc %s --->: enter! \n", __func__);
@@ -518,7 +518,7 @@ static ssize_t hw_reset_set(struct device *dev,
 			    struct device_attribute *attr, const char *buf,
 			    size_t count)
 {
-	int rc;
+	int rc = 0;
 	struct fpc1020_data *fpc1020 = dev_get_drvdata(dev);
 
 	if (!strncmp(buf, "reset", strlen("reset"))) {
@@ -659,7 +659,7 @@ static ssize_t device_prepare_set(struct device *dev,
 				  struct device_attribute *attr,
 				  const char *buf, size_t count)
 {
-	int rc;
+	int rc = 0;
 	struct fpc1020_data *fpc1020 = dev_get_drvdata(dev);
 
 	if (!strncmp(buf, "enable", strlen("enable")))
@@ -793,7 +793,7 @@ static ssize_t vendor_update(struct device *dev,
 			     struct device_attribute *attr,
 			     const char *buf, size_t count)
 {
-	int rc;
+	int rc = 0;
 	return rc ? rc : count;
 }
 
@@ -906,7 +906,7 @@ static irqreturn_t fpc1020_irq_handler(int irq, void *handle)
 static int fpc1020_request_named_gpio(struct fpc1020_data *fpc1020,
 				      const char *label, int *gpio)
 {
-	int rc;
+	int rc = 0;
 	struct device *dev = fpc1020->dev;
 	struct device_node *np = dev->of_node;
 
@@ -1117,7 +1117,7 @@ static struct platform_driver fpc1020_driver = {
 
 static int __init fpc1020_init(void)
 {
-	int rc;
+	int rc = 0;
 
 	rc = platform_driver_register(&fpc1020_driver);
 	if (!rc)
