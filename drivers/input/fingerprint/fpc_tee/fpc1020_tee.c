@@ -364,7 +364,7 @@ static ssize_t request_vreg_gpio_set(struct device *dev,
 				     struct device_attribute *attr,
 				     const char *buf, size_t count)
 {
-	int rc;
+	int rc = 0;
 	struct fpc1020_data *fpc1020 = dev_get_drvdata(dev);
 
 	if (!memcmp(buf, "enable", strlen("enable")))
