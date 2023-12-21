@@ -432,7 +432,6 @@ static int help(struct sk_buff *skb, unsigned int protoff,
 		}
 
 		data = ib_ptr;
-
 		/* Skip any whitespace */
 		while (data < data_limit - 10) {
 			if (*data == ' ' || *data == '\r' || *data == '\n')
