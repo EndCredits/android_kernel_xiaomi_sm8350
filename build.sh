@@ -78,14 +78,14 @@ generate_flashable(){
     echo "------------------------------";
 
     AK3_PATH=$TARGET_OUT/ak3
-    REC_RES=(focaltech_touch.ko goodix_core.ko hwid.ko msm_drm.ko xiaomi_touch.ko)
+    # REC_RES=(focaltech_touch.ko goodix_core.ko hwid.ko msm_drm.ko xiaomi_touch.ko)
  
     echo ' Removing old package file ';
     rm -rf $AK3_PATH;
 
     echo ' Getting AnyKernel ';
     cp -r ./tools/ak3 $AK3_PATH;
-    mkdir -p $TARGET_OUT/./ak3/vendor_ramdisk/lib/modules
+    # mkdir -p $TARGET_OUT/./ak3/vendor_ramdisk/lib/modules
 
     cd $TARGET_OUT;
     ANYKERNEL_PATH=./ak3
@@ -94,10 +94,10 @@ generate_flashable(){
     cp -r $TARGET_KERNEL_FILE $ANYKERNEL_PATH/;
     cp -r $TARGET_KERNEL_DTB $ANYKERNEL_PATH/;
     cp -r $TARGET_KERNEL_DTBO $ANYKERNEL_PATH/;
-    cp -r $TARGET_VENDOR_DLKM $ANYKERNEL_PATH/;
-    for item in ${REC_RES[*]}; do
-        find vendor_dlkm/ -name $item -exec cp {} ./ak3/vendor_ramdisk/lib/modules \;
-    done
+    # cp -r $TARGET_VENDOR_DLKM $ANYKERNEL_PATH/;
+    # for item in ${REC_RES[*]}; do
+    #     find vendor_dlkm/ -name $item -exec cp {} ./ak3/vendor_ramdisk/lib/modules \;
+    # done
 
     echo ' Packaging flashable Kernel ';
     cd $ANYKERNEL_PATH;
@@ -138,62 +138,6 @@ clean(){
     rm -rf $TARGET_OUT;
 }
 
-update_gki_defconfig(){
-    echo "Updating lahaina-qgki_defconfig from latest source"
-    ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- REAL_CC=clang CC=clang CLANG_TRIPLE=aarch64-linux-gnu- LD=ld.lld LLVM=1 scripts/gki/generate_defconfig.sh    vendor/lahaina-qgki_defconfig
-}
-
-generate_modules(){
-    MODULES_DIR=$TARGET_OUT/modules_inst
-    mkdir -p $MODULES_DIR
-    make $FINAL_KERNEL_BUILD_PARA INSTALL_MOD_PATH=modules_inst INSTALL_MOD_STRIP=1 modules_install
-}
-
-build_vendor_dlkm(){
-    echo "------------------------------";
-    echo "Generating vendor_dlkm.img ...";
-    echo "------------------------------";
-
-    MKE2FS_CONF=$(pwd)/scripts/dlkm/mke2fs.conf
-    KSOURCE=$(pwd)
-
-    rm -rf $TARGET_OUT/modules_inst
-    
-    echo "-1 Modules installing"
-    generate_modules
-
-    cd $TARGET_OUT
-    loaddeps=(modules.dep modules.softdep modules.alias)
-
-    mkdir -p vendor_dlkm/lib/modules vendor_dlkm/etc
-
-    find ./modules_inst/lib/modules/5.4* -name "*.ko" -exec cp {} ./vendor_dlkm/lib/modules/ \;
-    for items in ${loaddeps[*]}; do
-        find ./modules_inst/lib/modules/5.4* -name "$items" -exec cp {} ./vendor_dlkm/lib/modules \;
-    done
-    cp -r $KSOURCE/scripts/dlkm/etc/* ./vendor_dlkm/etc/
-    
-    echo "-2 Processing modules dependencies"
-    sed -i 's/\(kernel\/[^: ]*\/\)\([^: ]*\.ko\)/\/vendor\/lib\/modules\/\2/g' vendor_dlkm/lib/modules/modules.dep
-    
-    echo "-3 Creating vendor_dlkm image"
-    dd if=/dev/zero of=$TARGET_OUT/vendor_dlkm.img bs=1M count=128
-    MKE2FS_CONFIG=$MKE2FS_CONF mke2fs -O "extent huge_file" -T largefile -L vendor_dlkm -d vendor_dlkm vendor_dlkm.img
-    e2fsck -f vendor_dlkm.img
-    resize2fs -M vendor_dlkm.img
-
-    cd $KSOURCE
-}
-
-use_prebuilt_dlkm(){
-    DLKM_BUILD_PATH=/srv/media/WD/pe/out/target/product/renoir/obj/PACKAGING/target_files_intermediates/aosp_renoir-target_files-eng.credits/IMAGES/
-    cp $DLKM_BUILD_PATH/$TARGET_VENDOR_DLKM $TARGET_OUT
-}
-
-ksu_prepare(){
-    ./scripts/config --file $TARGET_OUT/.config -e CONFIG_KSU
-}
-
 main(){
     if [ $1 == "help" -o $1 == "-h" ]
     then
@@ -220,7 +164,6 @@ main(){
         make_defconfig;
         build_kernel;
         link_all_dtb_files;
-        use_prebuilt_dlkm;
         generate_flashable;
     elif [ $1 == "flashable" ]
     then
@@ -234,7 +177,6 @@ main(){
         make_defconfig
         build_kernel
         link_all_dtb_files
-        use_prebuilt_dlkm
         generate_flashable
     elif [ $1 == "defconfig" ]
     then
@@ -242,18 +184,6 @@ main(){
     elif [ $1 == "upgkidefconf" ]
     then
         update_gki_defconfig
-    elif [ $1 == "buildksu" ]
-    then
-        make_defconfig
-        ksu_prepare
-        build_kernel
-        link_all_dtb_files
-        use_prebuilt_dlkm
-        generate_flashable
-        git checkout HEAD .
-    elif [ $1 == "build_dlkm" ]
-    then
-        use_prebuilt_dlkm
     else
         echo "Incorrect usage. Please run: "
         echo "  bash build.sh help (or -h) "
