@@ -15,7 +15,7 @@ device.name2=renoir_global
 device.name3=renoir_eea
 device.name4=renoir_jp
 device.name5=renoir_ru
-supported.versions= 13
+supported.versions=14
 supported.patchlevels=
 '; } # end properties
 
