@@ -57,7 +57,7 @@ make_defconfig(){
     echo " Building Kernel Defconfig..";
     echo "------------------------------";
 
-    make $FINAL_KERNEL_BUILD_PARA $DEFCONFIG_NAME;
+    make $FINAL_KERNEL_BUILD_PARA $TARGET_DEVICE_DEFCONFIG_NAME;
 }
 
 build_kernel(){
