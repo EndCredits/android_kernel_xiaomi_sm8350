@@ -2128,8 +2128,8 @@ static const char * const tx_master_ch_text_987x[] = {
 };
 
 static const struct soc_enum tx_master_ch_enum_987x =
-	SOC_ENUM_SINGLE_EXT(ARRAY_SIZE(tx_master_ch_text),
-					tx_master_ch_text);
+	SOC_ENUM_SINGLE_EXT(ARRAY_SIZE(tx_master_ch_text_987x),
+					tx_master_ch_text_987x);
 
 static void wcd937x_tx_get_slave_ch_type_idx(const char *wname, int *ch_idx)
 {
