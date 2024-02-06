@@ -5750,7 +5750,7 @@ static ssize_t sysfs_doze_mode_read(struct device *dev,
 	panel = display->panel;
 
 	mutex_lock(&panel->panel_lock);
-	doze_mode = panel->doze_mode;
+	doze_mode = panel->doze_mode_active;
 	mutex_unlock(&panel->panel_lock);
 
 	return snprintf(buf, PAGE_SIZE, "%d\n", doze_mode);
@@ -5776,7 +5776,7 @@ static ssize_t sysfs_doze_mode_write(struct device *dev,
 		return rc;
 	}
 
-	if (mode < DSI_DOZE_LPM || mode > DSI_DOZE_HBM) {
+	if (mode < DSI_DOZE_MODE_NOLP || mode > DSI_DOZE_MODE_LP_HBM) {
 		pr_err("%s: invalid value for doze mode\n", __func__);
 		return -EINVAL;
 	}

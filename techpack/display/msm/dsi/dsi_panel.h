@@ -53,11 +53,6 @@ enum dsi_backlight_type {
 	DSI_BACKLIGHT_MAX,
 };
 
-enum dsi_doze_mode_type {
-	DSI_DOZE_LPM = 0,
-	DSI_DOZE_HBM,
-};
-
 enum bl_update_flag {
 	BL_UPDATE_DELAY_UNTIL_FIRST_FRAME,
 	BL_UPDATE_NONE,
@@ -211,6 +206,12 @@ struct dsi_panel_ops {
 	int (*parse_power_cfg)(struct dsi_panel *panel);
 };
 
+enum dsi_doze_mode_type {
+	DSI_DOZE_MODE_NOLP = 0,
+	DSI_DOZE_MODE_LP_LBM,
+	DSI_DOZE_MODE_LP_HBM,
+};
+
 struct dsi_panel {
 	const char *name;
 	const char *type;
@@ -278,8 +279,9 @@ struct dsi_panel {
 	struct dsi_panel_ops panel_ops;
 
 	bool doze_enabled;
-	bool doze_requested;
-	enum dsi_doze_mode_type doze_mode;
+	enum dsi_doze_mode_type doze_mode_active;
+	enum dsi_doze_mode_type doze_mode_requested;
+	bool aod_nolp_command_enabled;
 
 	bool fod_hbm_enabled;
 	bool fod_hbm_requested;
