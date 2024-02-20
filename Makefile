@@ -782,9 +782,6 @@ else ifdef CONFIG_CC_OPTIMIZE_FOR_SIZE
 KBUILD_CFLAGS += -Os
 endif
 
-ifdef CONFIG_CC_IS_CLANG
-KBUILD_CFLAGS += -mcpu=cortex-a55
-KBUILD_AFLAGS += -mcpu=cortex-a55
 ifdef CONFIG_POLLY_CLANG
 KBUILD_CFLAGS	+= -mllvm -polly \
 		   -mllvm -polly-ast-use-context \
@@ -812,10 +809,6 @@ endif
 ifdef CONFIG_LD_DEAD_CODE_DATA_ELIMINATION
 POLLY_FLAGS	+= -mllvm -polly-run-dce
 endif
-endif
-else
-KBUILD_CFLAGS += -mcpu=cortex-a76.cortex-a55
-KBUILD_AFLAGS += -mcpu=cortex-a76.cortex-a55
 endif
 
 # Tell gcc to never replace conditional load with a non-conditional one
