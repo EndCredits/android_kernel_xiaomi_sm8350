@@ -475,6 +475,8 @@ static int32_t aprv2_core_fn_q(struct apr_client_data *data, void *priv)
 	case AVCS_CMD_RSP_LOAD_MODULES:
 		pr_debug("%s: Received AVCS_CMD_RSP_LOAD_MODULES\n",
 			 __func__);
+		if (!rsp_payload)
+			return -EINVAL;
 		if (data->payload_size != ((sizeof(struct avcs_load_unload_modules_sec_payload)
 			* rsp_payload->num_modules) + sizeof(uint32_t))) {
 			pr_err("%s: payload size greater than expected size %d\n",
@@ -1099,6 +1101,7 @@ int32_t q6core_avcs_load_unload_modules(struct avcs_load_unload_modules_payload
 done:
 	kfree(mod);
 	kfree(rsp_payload);
+	rsp_payload = NULL;
 	mutex_unlock(&(q6core_lcl.cmd_lock));
 	return ret;
 }
@@ -1503,8 +1506,10 @@ int q6core_map_mdf_memory_regions(uint64_t *buf_add, uint32_t mempool_id,
 			* bufcnt;
 
 	mmap_region_cmd = kzalloc(cmd_size, GFP_KERNEL);
-	if (mmap_region_cmd == NULL)
+	if (mmap_region_cmd == NULL) {
+		mutex_unlock(&q6core_lcl.cmd_lock);
 		return -ENOMEM;
+	}
 
 	mmap_regions = (struct avs_cmd_shared_mem_map_regions *)mmap_region_cmd;
 	mmap_regions->hdr.hdr_field = APR_HDR_FIELD(APR_MSG_TYPE_SEQ_CMD,
