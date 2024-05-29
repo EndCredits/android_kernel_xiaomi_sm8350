@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0-only
 /*
  * Copyright (c) 2017-2020, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022-2023 Qualcomm Innovation Center, Inc. All rights reserved.
  */
 
 #include <linux/module.h>
@@ -123,6 +123,10 @@ static int cam_lrme_mgr_util_packet_validate(struct cam_packet *packet,
 		packet->cmd_buf_offset);
 
 	for (i = 0; i < packet->num_cmd_buf; i++) {
+		rc = cam_packet_util_validate_cmd_desc(&cmd_desc[i]);
+		if (rc)
+			return rc;
+
 		if (!cmd_desc[i].length)
 			continue;
 
@@ -323,6 +327,10 @@ static int cam_lrme_mgr_util_prepare_hw_update_entries(
 		&prepare->packet->payload + prepare->packet->cmd_buf_offset);
 
 	for (i = 0; i < prepare->packet->num_cmd_buf; i++) {
+		rc = cam_packet_util_validate_cmd_desc(&cmd_desc[i]);
+		if (rc)
+			return rc;
+
 		if (!cmd_desc[i].length)
 			continue;
 
@@ -704,6 +712,7 @@ static int cam_lrme_mgr_hw_dump(void *hw_mgr_priv, void *hw_dump_args)
 	CAM_DBG(CAM_LRME, "Offset before %zu after %zu",
 		dump_args->offset, lrme_dump_args.offset);
 	dump_args->offset = lrme_dump_args.offset;
+	cam_mem_put_cpu_buf(dump_args->buf_handle);
 	return rc;
 }
 
