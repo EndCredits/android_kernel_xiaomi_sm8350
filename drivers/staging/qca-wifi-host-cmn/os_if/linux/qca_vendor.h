@@ -2851,7 +2851,10 @@ enum qca_vendor_attr_scan_freq_list_scheme {
  *	due to poor RSSI of the connected AP.
  * @QCA_ROAM_TRIGGER_REASON_BETTER_RSSI: Set if the roam has to be triggered
  *	upon finding a BSSID with a better RSSI than the connected BSSID.
- *	Here the RSSI of the current BSSID need not be poor.
+ *	Also, set if the roam has to be triggered due to the high RSSI of the
+ *	current connected AP (better than
+ *	QCA_ATTR_ROAM_CONTROL_CONNECTED_HIGH_RSSI_OFFSET). Here the RSSI of
+ *	the current BSSID need not be poor.
  * @QCA_ROAM_TRIGGER_REASON_PERIODIC: Set if the roam has to be triggered
  *	by triggering a periodic scan to find a better AP to roam.
  * @QCA_ROAM_TRIGGER_REASON_DENSE: Set if the roam has to be triggered
@@ -3280,6 +3283,16 @@ enum qca_vendor_attr_roam_candidate_selection_criteria {
  *	    discovered.
  *	The default behavior if this flag is not specified is to include all
  *	the supported 6 GHz PSC frequencies in the roam full scan.
+ *
+ * @QCA_ATTR_ROAM_CONTROL_CONNECTED_HIGH_RSSI_OFFSET: Unsigned 8-bit value.
+ *	This attribute signifies the RSSI offset that is added to low RSSI
+ *	threshold (QCA_ATTR_ROAM_CONTROL_CONNECTED_LOW_RSSI_THRESHOLD) to imply
+ *	high RSSI threshold. STA is expected to trigger roam if the current
+ *	connected AP's RSSI gets above this high RSSI threshold. STA's roam
+ *	attempt on high RSSI threshold aims to find candidates from other
+ *	better Wi-Fi bands. E.g., STA would initially connect to a 2.4 GHz BSSID
+ *	and would migrate to 5/6 GHz when it comes closer to the AP (high RSSI
+ *	for 2.4 GHz BSS).
  */
 enum qca_vendor_attr_roam_control {
 	QCA_ATTR_ROAM_CONTROL_ENABLE = 1,
@@ -3301,6 +3314,7 @@ enum qca_vendor_attr_roam_control {
 	QCA_ATTR_ROAM_CONTROL_HO_DELAY_FOR_RX = 25,
 	QCA_ATTR_ROAM_CONTROL_FULL_SCAN_NO_REUSE_PARTIAL_SCAN_FREQ = 26,
 	QCA_ATTR_ROAM_CONTROL_FULL_SCAN_6GHZ_ONLY_ON_PRIOR_DISCOVERY = 27,
+	QCA_ATTR_ROAM_CONTROL_CONNECTED_HIGH_RSSI_OFFSET = 31,
 
 	/* keep last */
 	QCA_ATTR_ROAM_CONTROL_AFTER_LAST,
@@ -4826,6 +4840,19 @@ enum qca_wlan_vendor_attr_config {
 	 * this attribute are 1-Enable and 0-Disable.
 	 */
 	QCA_WLAN_VENDOR_ATTR_CONFIG_FT_OVER_DS = 80,
+
+	/*
+	 * 8-bit unsigned value. This attribute can be used to configure the
+	 * firmware to enable/disable ARP/NS offload feature. Possible values
+	 * for this attribute are 0-Disable and 1-Enable.
+	 *
+	 * This attribute is only applicable for STA/P2P-Client interface,
+	 * and is optional, default behavior is APR/NS offload Enable.
+	 *
+	 * This attribute can be set in disconncted and connected state, and
+	 * will restore to default behavior if interface is closed.
+	 */
+	QCA_WLAN_VENDOR_ATTR_CONFIG_ARP_NS_OFFLOAD = 81,
 
 	/* 8-bit unsigned value, whenever wifi calling (wfc) begin or end,
 	 * Userspace sends this information to driver/firmware to configure

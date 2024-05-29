@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2017-2021 The Linux Foundation. All rights reserved.
- * Copyright (c) 2021-2022 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2021-2024 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
@@ -541,21 +541,25 @@ QDF_STATUS wlan_reg_read_current_country(struct wlan_objmgr_psoc *psoc,
 
 #ifdef CONFIG_REG_CLIENT
 /**
- * wlan_reg_get_6g_power_type_for_ctry() - Return power type for 6G based
+ * wlan_reg_get_best_6g_power_type() - Return best power type for 6GHz
+ * connection
  * on country IE
+ * @psoc: pointer to psoc
+ * @pdev: pointer to pdev
  * @ap_ctry: ptr to country string in country IE
  * @sta_ctry: ptr to sta programmed country
  * @pwr_type_6g: ptr to 6G power type
  * @ctry_code_match: Check for country IE and sta country code match
  * @ap_pwr_type: AP's power type for 6G as advertised in HE ops IE
+ * @chan_freq: Connection channel frequency
  * Return: QDF_STATUS
  */
 QDF_STATUS
-wlan_reg_get_6g_power_type_for_ctry(struct wlan_objmgr_psoc *psoc,
-				    uint8_t *ap_ctry, uint8_t *sta_ctry,
-				    enum reg_6g_ap_type *pwr_type_6g,
-				    bool *ctry_code_match,
-				    enum reg_6g_ap_type ap_pwr_type);
+wlan_reg_get_best_6g_power_type(struct wlan_objmgr_psoc *psoc,
+				struct wlan_objmgr_pdev *pdev,
+				enum reg_6g_ap_type *pwr_type_6g,
+				enum reg_6g_ap_type ap_pwr_type,
+				uint32_t chan_freq);
 #endif
 
 #ifdef CONFIG_CHAN_NUM_API
@@ -1061,6 +1065,14 @@ bool wlan_reg_is_etsi(uint8_t *country);
 bool wlan_reg_chan_is_49ghz(struct wlan_objmgr_pdev *pdev,
 		uint8_t chan_num);
 #endif /* CONFIG_CHAN_NUM_API */
+
+/**
+ * wlan_reg_ctry_support_vlp() - Country supports VLP or not
+ * @country: The country information
+ *
+ * Return: true or false
+ */
+bool wlan_reg_ctry_support_vlp(uint8_t *country);
 
 /**
  * wlan_reg_set_country() - Set the current regulatory country

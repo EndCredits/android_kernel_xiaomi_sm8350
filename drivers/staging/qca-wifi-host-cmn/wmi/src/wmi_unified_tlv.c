@@ -14539,7 +14539,7 @@ extract_smart_monitor_event_tlv(void *handle, void *evt_buf,
 	if (params->vdev_id >= WLAN_UMAC_PDEV_MAX_VDEVS)
 		return QDF_STATUS_E_INVAL;
 
-	params->rx_avg_rssi = smu_event->avg_rssi_data_dbm;
+	params->rx_vht_sgi = smu_event->rx_vht_sgi;
 
 	return QDF_STATUS_SUCCESS;
 }
@@ -15983,6 +15983,10 @@ static void populate_tlv_service(uint32_t *wmi_service)
 #ifdef WLAN_FEATURE_P2P_P2P_STA
 	wmi_service[wmi_service_p2p_p2p_cc_support] =
 			WMI_SERVICE_P2P_P2P_CONCURRENCY_SUPPORT;
+#endif
+#ifdef WLAN_FEATURE_ROAM_OFFLOAD
+	wmi_service[wmi_service_5ghz_hi_rssi_roam_support] =
+					WMI_SERVICE_5GHZ_HI_RSSI_ROAM_SUPPORT;
 #endif
 }
 
