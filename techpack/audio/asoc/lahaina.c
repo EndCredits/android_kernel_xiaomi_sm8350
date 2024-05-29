@@ -2105,13 +2105,13 @@ static int tdm_get_sample_rate(int value)
 		sample_rate = SAMPLING_RATE_8KHZ;
 		break;
 	case 1:
-		sample_rate = SAMPLING_RATE_11P025KHZ;
-		break;
-	case 2:
 		sample_rate = SAMPLING_RATE_16KHZ;
 		break;
+	case 2:
+		sample_rate = SAMPLING_RATE_32KHZ;
+		break;
 	case 3:
-		sample_rate = SAMPLING_RATE_22P05KHZ;
+		sample_rate = SAMPLING_RATE_48KHZ;
 		break;
 	case 4:
 		sample_rate = SAMPLING_RATE_96KHZ;
@@ -2137,13 +2137,13 @@ static int tdm_get_sample_rate_val(int sample_rate)
 	case SAMPLING_RATE_8KHZ:
 		sample_rate_val = 0;
 		break;
-	case SAMPLING_RATE_11P025KHZ:
+	case SAMPLING_RATE_16KHZ:
 		sample_rate_val = 1;
 		break;
-	case SAMPLING_RATE_16KHZ:
+	case SAMPLING_RATE_32KHZ:
 		sample_rate_val = 2;
 		break;
-	case SAMPLING_RATE_22P05KHZ:
+	case SAMPLING_RATE_48KHZ:
 		sample_rate_val = 3;
 		break;
 	case SAMPLING_RATE_96KHZ:
@@ -2156,7 +2156,7 @@ static int tdm_get_sample_rate_val(int sample_rate)
 		sample_rate_val = 6;
 		break;
 	default:
-		sample_rate_val = 6;
+		sample_rate_val = 3;
 		break;
 	}
 	return sample_rate_val;
