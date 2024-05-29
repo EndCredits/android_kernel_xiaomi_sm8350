@@ -2097,7 +2097,8 @@ static bool policy_mgr_valid_sta_channel_check(struct wlan_objmgr_psoc *psoc,
 	     !sta_sap_scc_on_dfs_chan) ||
 	    wlan_reg_is_passive_or_disable_for_freq(
 	    pm_ctx->pdev, sta_ch_freq) ||
-	    !policy_mgr_is_safe_channel(psoc, sta_ch_freq)) {
+	    (!policy_mgr_sta_sap_scc_on_lte_coex_chan(psoc) &&
+	     !policy_mgr_is_safe_channel(psoc, sta_ch_freq))) {
 		if (policy_mgr_is_hw_dbs_capable(psoc))
 			return true;
 		else
@@ -2607,6 +2608,14 @@ QDF_STATUS policy_mgr_reset_connection_update(struct wlan_objmgr_psoc *psoc)
 	}
 
 	return QDF_STATUS_SUCCESS;
+}
+
+void policy_mgr_reset_hw_mode_change(struct wlan_objmgr_psoc *psoc)
+{
+	policy_mgr_err("Clear hw mode change and connection update evt");
+	policy_mgr_set_hw_mode_change_in_progress(
+			psoc, POLICY_MGR_HW_MODE_NOT_IN_PROGRESS);
+	policy_mgr_reset_connection_update(psoc);
 }
 
 QDF_STATUS policy_mgr_set_connection_update(struct wlan_objmgr_psoc *psoc)

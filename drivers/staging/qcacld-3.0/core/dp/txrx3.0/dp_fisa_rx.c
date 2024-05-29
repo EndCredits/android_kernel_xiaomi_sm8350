@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2020-2021, The Linux Foundation. All rights reserved.
- * Copyright (c) 2022 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022-2023 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -1608,6 +1608,10 @@ static bool dp_fisa_aggregation_should_stop(
 	uint32_t cumulative_ip_len_delta = hal_cumulative_ip_len -
 					   fisa_flow->hal_cumultive_ip_len;
 	/**
+	 * kernel network panic if UDP data length < 12 bytes get aggregated,
+	 * no solid conclusion currently, as a SW WAR, only allow UDP
+	 * aggregation if UDP data length >= 16 bytes.
+	 *
 	 * current cumulative ip length should > last cumulative_ip_len
 	 * and <= last cumulative_ip_len + 1478, also current aggregate
 	 * count should be equal to last aggregate count + 1,
@@ -1616,6 +1620,7 @@ static bool dp_fisa_aggregation_should_stop(
 	 * otherwise, current fisa flow aggregation should be stopped.
 	 */
 	if (fisa_flow->do_not_aggregate ||
+	    msdu_len < (l4_hdr_offset + FISA_MIN_L4_AND_DATA_LEN) ||
 	    hal_cumulative_ip_len <= fisa_flow->hal_cumultive_ip_len ||
 	    cumulative_ip_len_delta > FISA_MAX_SINGLE_CUMULATIVE_IP_LEN ||
 	    (fisa_flow->last_hal_aggr_count + 1) != hal_aggr_count ||
@@ -1896,6 +1901,7 @@ QDF_STATUS dp_fisa_rx(struct dp_soc *soc, struct dp_vdev *vdev,
 	struct dp_fisa_rx_sw_ft *fisa_flow;
 	int fisa_ret;
 	uint8_t rx_ctx_id = QDF_NBUF_CB_RX_CTX_ID(nbuf_list);
+	uint32_t tlv_reo_dest_ind;
 
 	head_nbuf = nbuf_list;
 
@@ -1923,6 +1929,17 @@ QDF_STATUS dp_fisa_rx(struct dp_soc *soc, struct dp_vdev *vdev,
 
 		qdf_nbuf_push_head(head_nbuf, RX_PKT_TLVS_LEN +
 				   QDF_NBUF_CB_RX_PACKET_L3_HDR_PAD(head_nbuf));
+
+		hal_rx_msdu_get_reo_destination_indication(soc->hal_soc,
+							   (uint8_t *)qdf_nbuf_data(head_nbuf),
+							   &tlv_reo_dest_ind);
+		/* Skip FISA aggregation and drop the frame if RDI is REO2TCL */
+		if (qdf_unlikely(tlv_reo_dest_ind == REO_REMAP_TCL)) {
+			qdf_nbuf_free(head_nbuf);
+			head_nbuf = next_nbuf;
+			DP_STATS_INC(dp_fisa_rx_hdl, incorrect_rdi, 1);
+			continue;
+		}
 
 		/* Add new flow if the there is no ongoing flow */
 		fisa_flow = dp_rx_get_fisa_flow(dp_fisa_rx_hdl, vdev,

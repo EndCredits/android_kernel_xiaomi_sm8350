@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2012-2020 The Linux Foundation. All rights reserved.
- * Copyright (c) 2022 Qualcomm Innovation Center, Inc. All rights reserved.
+ * Copyright (c) 2022-2023 Qualcomm Innovation Center, Inc. All rights reserved.
  *
  * Permission to use, copy, modify, and/or distribute this software for
  * any purpose with or without fee is hereby granted, provided that the
@@ -615,6 +615,8 @@ QDF_STATUS sme_ser_cmd_callback(struct wlan_serialization_command *cmd,
 		status = sme_ser_handle_active_cmd(cmd);
 		break;
 	case WLAN_SER_CB_CANCEL_CMD:
+		if (cmd->cmd_type == WLAN_SER_CMD_SET_HW_MODE)
+			policy_mgr_reset_hw_mode_change(mac_ctx->psoc);
 		break;
 	case WLAN_SER_CB_RELEASE_MEM_CMD:
 		if (cmd->vdev)
@@ -629,6 +631,9 @@ QDF_STATUS sme_ser_cmd_callback(struct wlan_serialization_command *cmd,
 		    sme_cmd->command == eSmeCommandWmStatusChange))
 			qdf_trigger_self_recovery(mac_ctx->psoc,
 						  QDF_ACTIVE_LIST_TIMEOUT);
+
+		if (cmd->cmd_type == WLAN_SER_CMD_SET_HW_MODE)
+			policy_mgr_reset_hw_mode_change(mac_ctx->psoc);
 		break;
 	default:
 		sme_debug("unknown reason code");
@@ -856,8 +861,7 @@ QDF_STATUS sme_open(mac_handle_t mac_handle)
 /*
  * sme_init_chan_list, triggers channel setup based on country code.
  */
-QDF_STATUS sme_init_chan_list(mac_handle_t mac_handle, uint8_t *alpha2,
-			      enum country_src cc_src)
+QDF_STATUS sme_init_chan_list(mac_handle_t mac_handle, enum country_src cc_src)
 {
 	struct mac_context *pmac = MAC_CONTEXT(mac_handle);
 
@@ -866,7 +870,7 @@ QDF_STATUS sme_init_chan_list(mac_handle_t mac_handle, uint8_t *alpha2,
 		pmac->mlme_cfg->gen.enabled_11d = false;
 	}
 
-	return csr_init_chan_list(pmac, alpha2);
+	return csr_init_chan_list(pmac);
 }
 
 /*
@@ -13085,7 +13089,9 @@ void sme_get_opclass(mac_handle_t mac_handle, uint8_t channel,
 		     uint8_t bw_offset, uint8_t *opclass)
 {
 	struct mac_context *mac_ctx = MAC_CONTEXT(mac_handle);
+	uint8_t reg_cc[REG_ALPHA2_LEN + 1];
 
+	wlan_reg_read_current_country(mac_ctx->psoc, reg_cc);
 	/* redgm opclass table contains opclass for 40MHz low primary,
 	 * 40MHz high primary and 20MHz. No support for 80MHz yet. So
 	 * first we will check if bit for 40MHz is set and if so find
@@ -13095,21 +13101,17 @@ void sme_get_opclass(mac_handle_t mac_handle, uint8_t channel,
 	 */
 	if (bw_offset & (1 << BW_40_OFFSET_BIT)) {
 		*opclass = wlan_reg_dmn_get_opclass_from_channel(
-				mac_ctx->scan.countryCodeCurrent,
-				channel, BW40_LOW_PRIMARY);
+				reg_cc, channel, BW40_LOW_PRIMARY);
 		if (!(*opclass)) {
 			*opclass = wlan_reg_dmn_get_opclass_from_channel(
-					mac_ctx->scan.countryCodeCurrent,
-					channel, BW40_HIGH_PRIMARY);
+					reg_cc, channel, BW40_HIGH_PRIMARY);
 		}
 	} else if (bw_offset & (1 << BW_20_OFFSET_BIT)) {
 		*opclass = wlan_reg_dmn_get_opclass_from_channel(
-				mac_ctx->scan.countryCodeCurrent,
-				channel, BW20);
+				reg_cc, channel, BW20);
 	} else {
 		*opclass = wlan_reg_dmn_get_opclass_from_channel(
-				mac_ctx->scan.countryCodeCurrent,
-				channel, BWALL);
+				reg_cc, channel, BWALL);
 	}
 }
 #endif

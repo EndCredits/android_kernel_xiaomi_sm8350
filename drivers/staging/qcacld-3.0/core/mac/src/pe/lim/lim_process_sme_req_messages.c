@@ -1222,7 +1222,7 @@ __lim_process_sme_join_req(struct mac_context *mac_ctx, void *msg_buf)
 	uint8_t vdev_id = 0;
 	int8_t local_power_constraint = 0;
 	struct vdev_mlme_obj *mlme_obj;
-	bool is_pwr_constraint;
+	bool is_pwr_constraint = false;
 	uint16_t ie_len;
 	const uint8_t *vendor_ie;
 	struct bss_description *bss_desc;
@@ -1613,6 +1613,11 @@ __lim_process_sme_join_req(struct mac_context *mac_ctx, void *msg_buf)
 			&session->limCurrentBssQosCaps,
 			&session->gLimCurrentBssUapsd,
 			&local_power_constraint, session, &is_pwr_constraint);
+
+		mlme_obj->reg_tpc_obj.is_power_constraint_abs =
+							!is_pwr_constraint;
+
+		session->best_6g_power_type = sme_join_req->best_6g_power_type;
 
 		if (wlan_reg_is_ext_tpc_supported(mac_ctx->psoc)) {
 			mlme_obj->reg_tpc_obj.ap_constraint_power =
@@ -2016,10 +2021,7 @@ uint8_t lim_get_max_tx_power(struct mac_context *mac,
 }
 
 void lim_calculate_tpc(struct mac_context *mac,
-		       struct pe_session *session,
-		       bool is_pwr_constraint_absolute,
-		       uint8_t ap_pwr_type,
-		       bool ctry_code_match)
+		       struct pe_session *session)
 {
 	bool is_psd_power = false;
 	bool is_tpe_present = false, is_6ghz_freq = false;
@@ -2031,7 +2033,7 @@ void lim_calculate_tpc(struct mac_context *mac,
 	qdf_freq_t oper_freq, start_freq = 0;
 	struct ch_params ch_params;
 	struct vdev_mlme_obj *mlme_obj;
-	uint8_t tpe_power;
+	int8_t tpe_power;
 	bool skip_tpe = false;
 
 	mlme_obj = wlan_vdev_mlme_get_cmpt_obj(session->vdev);
@@ -2059,18 +2061,8 @@ void lim_calculate_tpc(struct mac_context *mac,
 	} else {
 		is_6ghz_freq = true;
 		is_psd_power = wlan_reg_is_6g_psd_power(mac->pdev);
-		/* Power mode calculation for 6G*/
-		ap_power_type_6g = session->ap_power_type;
-		if (LIM_IS_STA_ROLE(session)) {
-			if (!session->lim_join_req) {
-				if (!ctry_code_match)
-					ap_power_type_6g = ap_pwr_type;
-			} else {
-				if (!session->lim_join_req->same_ctry_code)
-					ap_power_type_6g =
-					session->lim_join_req->ap_power_type_6g;
-			}
-		}
+		if (LIM_IS_STA_ROLE(session))
+			ap_power_type_6g = session->best_6g_power_type;
 	}
 
 	if (mlme_obj->reg_tpc_obj.num_pwr_levels) {
@@ -2140,8 +2132,9 @@ void lim_calculate_tpc(struct mac_context *mac,
 				mlme_obj->reg_tpc_obj.ap_constraint_power;
 			pe_debug("local constraint: %d"
 				 "power constraint absolute: %d",
-				 local_constraint, is_pwr_constraint_absolute);
-			if (is_pwr_constraint_absolute)
+				 local_constraint,
+				 mlme_obj->reg_tpc_obj.is_power_constraint_abs);
+			if (mlme_obj->reg_tpc_obj.is_power_constraint_abs)
 				max_tx_power = QDF_MIN(reg_max,
 						       local_constraint);
 			else
@@ -2153,7 +2146,14 @@ void lim_calculate_tpc(struct mac_context *mac,
 				tpe_power =  mlme_obj->reg_tpc_obj.eirp_power;
 			else
 				tpe_power = mlme_obj->reg_tpc_obj.tpe[i];
-			max_tx_power = QDF_MIN(max_tx_power, (int8_t)tpe_power);
+			/**
+			 * AP advertises TPE IE tx power as 8-bit unsigned int.
+			 * STA needs to convert it into an 8-bit 2s complement
+			 * signed integer in the range –64 dBm to 63 dBm with a
+			 * 0.5 dB step
+			 */
+			tpe_power /= 2;
+			max_tx_power = QDF_MIN(max_tx_power, tpe_power);
 			pe_debug("TPE: %d", tpe_power);
 		}
 
