@@ -231,20 +231,27 @@ static void msm_nand_print_rpm_info(struct device *dev)
 static int msm_nand_suspend(struct device *dev)
 {
 	int ret = 0;
+	struct msm_nand_info *info = dev_get_drvdata(dev);
+
+	mutex_lock(&info->lock);
 
 	if (!pm_runtime_suspended(dev))
 		ret = msm_nand_runtime_suspend(dev);
 
+	mutex_unlock(&info->lock);
 	return ret;
 }
 
 static int msm_nand_resume(struct device *dev)
 {
 	int ret = 0;
+	struct msm_nand_info *info = dev_get_drvdata(dev);
 
+	mutex_lock(&info->lock);
 	if (!pm_runtime_suspended(dev))
 		ret = msm_nand_runtime_resume(dev);
 
+	mutex_unlock(&info->lock);
 	return ret;
 }
 #else
@@ -4370,6 +4377,15 @@ static int msm_nand_bam_panic_notifier(struct notifier_block *this,
 	struct msm_nand_info *info = dev_get_drvdata(dev_node);
 	struct msm_nand_chip *chip = &info->nand_chip;
 	int err;
+
+	/* We shouldn't request for a new resource during panic
+	 * as the cores and irq's were already in disabled state.
+	 * So, check device runtime status before request for a
+	 * resource (clock and bus).
+	 */
+
+	if (pm_runtime_suspended(chip->dev))
+		return NOTIFY_DONE;
 
 	err = msm_nand_get_device(chip->dev);
 	if (err)

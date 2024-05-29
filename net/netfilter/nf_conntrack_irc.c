@@ -432,7 +432,6 @@ static int help(struct sk_buff *skb, unsigned int protoff,
 		}
 
 		data = ib_ptr;
-
 		/* Skip any whitespace */
 		while (data < data_limit - 10) {
 			if (*data == ' ' || *data == '\r' || *data == '\n')
@@ -463,9 +462,7 @@ static int help(struct sk_buff *skb, unsigned int protoff,
 			if (memcmp(data, "\1DCC ", 5))
 				goto out;
 			data += 5;
-			/* we have at least (21+MINMATCHLEN)-(2+5)
-			 * bytes valid data left
-			 */
+			/* we have at least (21+MINMATCHLEN)-(2+5) bytes valid data left */
 
 			iph = ip_hdr(skb);
 			pr_debug("DCC found in master %pI4:%u %pI4:%u\n",
@@ -483,7 +480,7 @@ static int help(struct sk_buff *skb, unsigned int protoff,
 
 				/* we have at least
 				 * (21+MINMATCHLEN)-7-dccprotos[i].matchlen
-				 * bytes valid data left (== 14/13 bytes)
+				 *bytes valid data left (== 14/13 bytes)
 				 */
 				if (parse_dcc(data, data_limit, &dcc_ip,
 					      &dcc_port, &addr_beg_p,
