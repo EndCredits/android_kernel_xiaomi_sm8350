@@ -69,7 +69,7 @@ COMMON_INC :=	-I$(AUDIO_ROOT)/$(COMMON_DIR)
 
 ############ WCD937X ############
 
-ifeq ($(TARGET_PRODUCT), taoyao)
+ifeq ($(CONFIG_BOARD_XIAOMI_TAOYAO), y)
 	CDEFINES += -DCONFIG_SND_SOC_FOR_ULTRASOUND_PATH
 endif
 

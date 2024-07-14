@@ -235,7 +235,7 @@ INCS +=		$(COMMON_INC) \
 
 EXTRA_CFLAGS += $(INCS)
 
-ifeq ($(TARGET_PRODUCT), taoyao)
+ifeq ($(CONFIG_BOARD_XIAOMI_TAOYAO), y)
 	CDEFINES += -DCONFIG_TARGET_PRODUCT_TAOYAO
 endif
 
@@ -279,28 +279,56 @@ ifeq ($(KERNEL_BUILD), 1)
 	obj-y	+= rouleur/
 endif
 
-ifneq (,$(filter $(TARGET_PRODUCT), venus star mars haydn odin vili))
-	obj-y	+= cs35l41/
+ifeq ($(CONFIG_BOARD_XIAOMI_VENUS),y)
+    obj-y += cs35l41/
 endif
 
-ifneq (,$(filter $(TARGET_PRODUCT), cetus))
-	obj-y	+= cs35l45/
+ifeq ($(CONFIG_BOARD_XIAOMI_STAR),y)
+    obj-y += cs35l41/
 endif
 
-ifneq (,$(filter $(TARGET_PRODUCT), renoir lisa))
-	obj-y	+= tfa98xx/
+ifeq ($(CONFIG_BOARD_XIAOMI_MARS),y)
+    obj-y += cs35l41/
 endif
 
-ifneq (,$(filter $(TARGET_PRODUCT), taoyao))
-	obj-y	+= tfa9874/
+ifeq ($(CONFIG_BOARD_XIAOMI_HAYDN),y)
+    obj-y += cs35l41/
 endif
 
-ifneq (,$(filter $(TARGET_PRODUCT), mona zijin))
-	obj-y	+= aw88263s/
+ifeq ($(CONFIG_BOARD_XIAOMI_ODIN),y)
+    obj-y += cs35l41/
 endif
 
-ifneq (,$(filter $(TARGET_PRODUCT), redwood))
-	obj-y	+= aw88263s_m20/
+ifeq ($(CONFIG_BOARD_XIAOMI_VILI),y)
+    obj-y += cs35l41/
+endif
+
+ifeq ($(CONFIG_BOARD_XIAOMI_CETUS), y)
+	obj-y += cs35l45/
+endif
+
+ifeq ($(CONFIG_BOARD_XIAOMI_RENOIR),y)
+    obj-y += tfa98xx/
+endif
+
+ifeq ($(CONFIG_BOARD_XIAOMI_LISA),y)
+    obj-y += tfa98xx/
+endif
+
+ifeq ($(CONFIG_BOARD_XIAOMI_TAOYAO), y)
+	obj-y += tfa9874/
+endif
+
+ifeq ($(CONFIG_BOARD_XIAOMI_MONA),y)
+    obj-y += aw88263s/
+endif
+
+ifeq ($(CONFIG_BOARD_XIAOMI_ZIJIN),y)
+    obj-y += aw88263s/
+endif
+
+ifeq ($(CONFIG_BOARD_XIAOMI_REDWOOD), y)
+	obj-y += aw88263s_m20/
 endif
 
 # Module information used by KBuild framework
