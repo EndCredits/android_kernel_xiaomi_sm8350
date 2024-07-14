@@ -278,6 +278,112 @@ config ARCH_SCUBA
 	  SCUBA chipset. If you do not wish to build a kernel that
 	  runs on this chipset or if you are unsure, say 'N' here.
 
+menu "Kernel config for xiaomi devices"
+
+config BOARD_XIAOMI
+	bool "Xiaomi devices support"
+	help
+		Enable to enable support to xiaomi devices
+
+if BOARD_XIAOMI
+
+config BOARD_XIAOMI_LAHAINA
+	bool "Xiaomi lahaina devices support"
+	select ARCH_QCOM
+	select ARCH_LAHAINA
+	help
+		Enable support for xiaomi lahaina devices
+
+config BOARD_XIAOMI_YUPIK
+	bool "Xiaomi yupik devices support"
+	select ARCH_QCOM
+	select ARCH_YUPIK
+	help
+		Enable support for xiaomi yupik devices
+
+config BOARD_XIAOMI_SHIMA
+	bool "Xiaomi shima devices support"
+	select ARCH_QCOM
+	select ARCH_SHIMA
+	help
+		Enable support for xiaomi shima devices
+
+config BOARD_XIAOMI_CETUS
+	bool "Xiaomi Mi MIX Fold"
+	select BOARD_XIAOMI_LAHAINA
+	help
+		Enable support for Xiaomi Mi MIX Fold
+
+config BOARD_XIAOMI_HAYDN
+	bool "Xiaomi Redmi K40 Pro / Redmi K40 Pro+ / Mi 11X Pro / Mi 11i"
+	select BOARD_XIAOMI_LAHAINA
+	help
+		Enable support for Xiaomi Redmi K40 Pro / Redmi K40 Pro+ / Mi 11X Pro / Mi 11i
+
+config BOARD_XIAOMI_LISA
+	bool "Xiaomi Mi 11 Lite 5G NE"
+	select BOARD_XIAOMI_YUPIK
+	help
+		Enable support for Xiaomi Mi 11 Lite 5G NE
+
+config BOARD_XIAOMI_MONA
+	bool "Xiaomi Civi"
+	select BOARD_XIAOMI_YUPIK
+	help
+		Enable support for Xiaomi Civi
+
+config BOARD_XIAOMI_ODIN
+	bool "Xiaomi MIX 4"
+	select BOARD_XIAOMI_LAHAINA
+	help
+		Enable support for Xiaomi MIX 4
+
+config BOARD_XIAOMI_REDWOOD
+	bool "Xiaomi Redmi Note 12 Pro Speed"
+	select BOARD_XIAOMI_YUPIK
+	help
+		Enable support for Redmi Note 12 Pro Speed
+
+config BOARD_XIAOMI_RENOIR
+	bool "Xiaomi Mi 11 Lite 5G"
+	select BOARD_XIAOMI_SHIMA
+	help
+		Enable support for Xiaomi Mi 11 Lite 5G
+
+config BOARD_XIAOMI_STAR
+	bool "Xiaomi Mi 11 Pro/Ultra"
+	select BOARD_XIAOMI_LAHAINA
+	help
+		Enable support for Xiaomi Mi 11 Ultra
+
+config BOARD_XIAOMI_TAOYAO
+	bool "Xiaomi Mi 12 Lite"
+	select BOARD_XIAOMI_YUPIK
+	help
+		Enable support for Xiaomi Mi 12 Lite
+
+config BOARD_XIAOMI_VENUS
+	bool "Xiaomi Mi 11"
+	select BOARD_XIAOMI_LAHAINA
+	help
+		Enable support for Xiaomi Mi 11
+
+config BOARD_XIAOMI_VILI
+	bool "Xiaomi 11T Pro"
+	select BOARD_XIAOMI_LAHAINA
+	help
+		Enable support for Xiaomi Mi 11T Pro
+
+config BOARD_XIAOMI_ZIJIN
+	bool "Xiaomi Civi 1S"
+	select BOARD_XIAOMI_YUPIK
+	help
+		Enable support for Xiaomi Civi 1S
+
+endif
+
+endmenu
+
 config ARCH_REALTEK
 	bool "Realtek Platforms"
 	help
