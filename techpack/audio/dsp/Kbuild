@@ -317,6 +317,7 @@ CDEFINES +=	-DANI_LITTLE_BYTE_ENDIAN \
 		-DPTT_SOCK_SVC_ENABLE \
 		-Wall\
 		-Werror\
+		-Wno-address-of-packed-member \
 		-D__linux__
 
 # TEST FOR STAR
