@@ -554,11 +554,25 @@ static void usb_cser_start_rx(struct f_cdev *port);
 static void usb_cser_resume(struct usb_function *f)
 {
 	struct f_cdev *port = func_to_port(f);
+	struct usb_composite_dev *cdev	= f->config->cdev;
 	unsigned long flags;
 	int ret;
 
 	struct usb_request *req, *t;
 	struct usb_ep *in;
+
+	/*
+	 * Bail out if the interface is in USB3 Function Suspend state.
+	 * In that case resume is done by Function Resume request (write).
+	 */
+	if ((cdev->gadget->speed >= USB_SPEED_SUPER) &&
+			port->func_is_suspended) {
+		if (port->func_wakeup_pending) {
+			ret = usb_func_wakeup(f);
+			port->func_wakeup_pending = (ret == -EAGAIN) ? true : false;
+		}
+		return;
+	}
 
 	pr_debug("%s\n", __func__);
 	port->is_suspended = false;
@@ -718,13 +732,26 @@ static int usb_cser_notify(struct f_cdev *port, u8 type, u16 value,
 static int port_notify_serial_state(struct cserial *cser)
 {
 	struct f_cdev *port = cser_to_port(cser);
-	int status;
+	int status, ret;
 	unsigned long flags;
 	struct usb_composite_dev *cdev = port->port_usb.func.config->cdev;
+	struct usb_function *func = &cser->func;
+	struct usb_gadget *gadget;
 
 	if (port->is_suspended) {
+		gadget = cser->func.config->cdev->gadget;
 		port->pending_state_notify = true;
 		pr_debug("%s: port is suspended\n", __func__);
+		if (usb_cser_get_remote_wakeup_capable(func, gadget)) {
+			if (gadget->speed >= USB_SPEED_SUPER && port->func_is_suspended) {
+				ret = usb_func_wakeup(func);
+				port->func_wakeup_pending = (ret == -EAGAIN) ? true : false;
+			} else {
+				ret = usb_gadget_wakeup(gadget);
+			}
+		} else {
+			pr_debug("%s remote-wakeup not capable\n", __func__);
+		}
 		return 0;
 	}
 
@@ -1453,9 +1480,10 @@ ssize_t f_cdev_write(struct file *file,
 		spin_unlock_irqrestore(&port->port_lock, flags);
 
 		if (gadget->speed >= USB_SPEED_SUPER
-		    && port->func_is_suspended)
+		    && port->func_is_suspended) {
 			ret = usb_func_wakeup(func);
-		else
+			port->func_wakeup_pending = (ret == -EAGAIN) ? true : false;
+		} else
 			ret = usb_gadget_wakeup(gadget);
 
 		if (ret < 0 && ret != -EACCES && ret != -EAGAIN) {
