@@ -23,7 +23,7 @@ ifeq ($(BOARD_HAS_QCOM_WLAN), true)
 # Check if this driver needs be built for current target
 ifneq ($(findstring qca_cld3,$(WIFI_DRIVER_BUILT)),)
 	WLAN_CHIPSET := qca_cld3
-	WLAN_SELECT  := CONFIG_QCA_CLD_WLAN=m
+	WLAN_SELECT  := CONFIG_QCA_CLD_WLAN=y
 endif
 
 # Build/Package only in case of supported target
