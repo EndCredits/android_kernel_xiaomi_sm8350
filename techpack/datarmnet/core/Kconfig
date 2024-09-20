@@ -4,7 +4,7 @@
 
 config RMNET_CORE
 	tristate "RMNET Core"
-	default m 
+	default y
 	select GRO_CELLS
 	---help---
 	  If you select this, you will enable the RMNET module which is used
@@ -14,7 +14,7 @@ config RMNET_CORE
 
 config RMNET_CTL
 	tristate "RMNET CTL"
-	default m
+	default y
 	---help---
 	  Enable the RMNET CTL module which is used for handling QMAP commands
 	  for flow control purposes.
