@@ -574,7 +574,7 @@ success:
 	 */
 	if (lock) {
 		vm_write_begin(vma);
-		WRITE_ONCE(vma->vm_flags, newflags);
+		WRITE_ONCE(vma->vm_flags, vma_pad_fixup_flags(vma, newflags));
 		vm_write_end(vma);
 	} else
 		munlock_vma_pages_range(vma, start, end);
