@@ -1004,6 +1004,28 @@
 		interrupt-names = "dcvsh0_int", "dcvsh1_int", "dcvsh2_int";
 
 		#freq-domain-cells = <2>;
+
+		qcom,cpufreq-table-0 =
+			<576000>,
+			<691200>,
+			<806400>,
+			<1171200>,
+			<1516800>,
+			<1670400>,
+			<1900800>;
+
+		qcom,cpufreq-table-1 =
+			<691200>,
+			<940800>,
+			<2131200>,
+			<2208000>;
+
+		qcom,cpufreq-table-2 =
+			<806400>,
+			<1094400>,
+			<2035200>,
+			<2169600>,
+			<2400000>;
 	};
 
 	qcom,cpufreq-hw-debug@18591000 {
