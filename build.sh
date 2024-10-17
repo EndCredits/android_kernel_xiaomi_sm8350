@@ -181,7 +181,7 @@ main(){
         generate_flashable
     elif [ $1 == "defconfig" ]
     then
-        DEFCONFIG_NAME="vendor/lahaina-qgki_defconfig vendor/xiaomi_QGKI.config vendor/${TARGET_DEVICE}_QGKI.config"
+        DEFCONFIG_NAME="vendor/lahaina-qgki_defconfig vendor/xiaomi_QGKI.config vendor/${TARGET_DEVICE}_QGKI.config vendor/debugfs.config"
         make_defconfig;
     elif [ $1 == "updateconf" ]
     then
