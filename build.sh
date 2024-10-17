@@ -107,7 +107,7 @@ save_defconfig(){
     COST_SEC=$[ $END_SEC-$START_SEC ];
     echo "Finished. Kernel config saved to $TARGET_OUT/defconfig"
     echo "Moving kernel defconfig to source tree"
-    mv $TARGET_OUT/defconfig $DEFCONFIG_PATH/$DEFCONFIG_NAME
+    mv $TARGET_OUT/defconfig $DEFCONFIG_PATH/${TARGET_DEVICE}_defconfig
     echo "Kernel Config Build Costed $(($COST_SEC/60))min $(($COST_SEC%60))s"
 
 }
@@ -151,7 +151,7 @@ main(){
         exit -1
     fi
     TARGET_DEVICE=$2
-    DEFCONFIG_NAME="vendor/${TARGET_DEVICE}_defconfig";
+    DEFCONFIG_NAME="${TARGET_DEVICE}_defconfig";
     if [ $1 == "help" -o $1 == "-h" ]
     then
         display_help
