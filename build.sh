@@ -87,8 +87,8 @@ generate_flashable(){
 
     echo ' Copying Kernel File '; 
     cp -r $TARGET_KERNEL_FILE $ANYKERNEL_PATH/;
-    cp -r $TARGET_KERNEL_DTB $ANYKERNEL_PATH/;
-    cp -r $TARGET_KERNEL_DTBO $ANYKERNEL_PATH/;
+    # cp -r $TARGET_KERNEL_DTB $ANYKERNEL_PATH/;
+    # cp -r $TARGET_KERNEL_DTBO $ANYKERNEL_PATH/;
 
     echo ' Packaging flashable Kernel ';
     cd $ANYKERNEL_PATH;
